@@ -478,10 +478,14 @@ src/engine/service/DatagramConnector.cpp -text
 src/engine/service/DatagramConnector.h -text
 src/engine/service/DatagramSession.cpp -text
 src/engine/service/DatagramSession.h -text
+src/engine/service/FilteringServiceHandler.h -text
 src/engine/service/Message.h -text
 src/engine/service/MessageQueue.cpp -text
 src/engine/service/MessageQueue.h -text
 src/engine/service/ServiceException.h -text
+src/engine/service/ServiceFilter.h -text
+src/engine/service/ServiceFilterChain.h -text
+src/engine/service/ServiceHandler.h -text
 src/engine/service/ServiceProcessThread.cpp -text
 src/engine/service/ServiceProcessThread.h -text
 src/engine/service/ServiceSession.cpp -text
