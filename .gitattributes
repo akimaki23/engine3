@@ -56,7 +56,6 @@ include/engine/core/Core.h -text
 include/engine/core/ManagedObject.cpp -text
 include/engine/core/ManagedObject.h -text
 include/engine/core/ManagedObject.idl -text
-include/engine/core/ManagedObjectImplementation.h -text
 include/engine/core/ManagedReference.h -text
 include/engine/core/ManagedWeakReference.h -text
 include/engine/core/ObjectUpdateToDatabaseTask.h -text
@@ -68,11 +67,8 @@ include/engine/core/TaskQueue.h -text
 include/engine/core/TaskScheduler.h -text
 include/engine/core/TaskWorkerThread.h -text
 include/engine/core/TimedTaskQueue.h -text
-include/engine/core/thread/RWLockable.h -text
-include/engine/core/thread/RWLockableImplementation.h -text
 include/engine/core/util/ManagedSortedVector.h -text
 include/engine/core/util/ManagedVector.h -text
-include/engine/core/util/ManagedVectorImplementation.h -text
 include/engine/core/util/ManagedVectorMap.h -text
 include/engine/db/BinaryData.h -text
 include/engine/db/Database.h -text
@@ -90,7 +86,6 @@ include/engine/db/berkley/Environment.h -text
 include/engine/db/berkley/EnvironmentConfig.h -text
 include/engine/db/berkley/Transaction.h -text
 include/engine/db/berkley/TransactionConfig.h -text
-include/engine/db/mysql/BinaryData.h -text
 include/engine/db/mysql/MySqlDatabase.h -text
 include/engine/db/mysql/ResultSet.h -text
 include/engine/db/mysql/Row.h -text
@@ -105,7 +100,6 @@ include/engine/lua/Lunar.h -text
 include/engine/orb/DOBObjectManager.h -text
 include/engine/orb/DOBObjectManagerImplementation.h -text
 include/engine/orb/DOBPacketHandler.h -text
-include/engine/orb/DONamingDirectoryService.h -text
 include/engine/orb/DistributedObjectBroker.h -text
 include/engine/orb/DistributedObjectBrokerClient.h -text
 include/engine/orb/DistributedObjectDirectory.h -text
@@ -145,7 +139,6 @@ include/engine/service/ServiceException.h -text
 include/engine/service/ServiceMessageHandlerThread.h -text
 include/engine/service/ServiceProcessThread.h -text
 include/engine/service/ServiceThread.h -text
-include/engine/service/StandaloneMessage.h -text
 include/engine/service/StreamServiceClient.h -text
 include/engine/service/StreamServiceClientProxy.h -text
 include/engine/service/StreamServiceThread.h -text
@@ -158,7 +151,6 @@ include/engine/service/proto/BaseMultiPacket.h -text
 include/engine/service/proto/BasePacket.h -text
 include/engine/service/proto/BasePacketHandler.h -text
 include/engine/service/proto/BaseProtocol.h -text
-include/engine/service/proto/BaseStandaloneMessage.h -text
 include/engine/service/proto/PacketHandler.h -text
 include/engine/service/proto/StandaloneBaseMessage.h -text
 include/engine/service/proto/events/BaseClientCleanupEvent.h -text
@@ -245,8 +237,6 @@ include/system/lang/Math.h -text
 include/system/lang/NumberFormatException.h -text
 include/system/lang/Object.h -text
 include/system/lang/OutOfMemoryError.h -text
-include/system/lang/Quaternion.h -text
-include/system/lang/Reference.h -text
 include/system/lang/Runnable.h -text
 include/system/lang/Short.h -text
 include/system/lang/SignalException.h -text
@@ -257,26 +247,11 @@ include/system/lang/System.h -text
 include/system/lang/Time.h -text
 include/system/lang/UnicodeString.h -text
 include/system/lang/Variable.h -text
-include/system/lang/Vector3.h -text
 include/system/lang/mersenne/MersenneTwister.h -text
 include/system/lang/ref/Reference.h -text
 include/system/lang/ref/ReferenceCounter.h -text
-include/system/lang/ref/ReferenceSlot.h -text
 include/system/lang/ref/WeakReference.h -text
 include/system/lang/types.h -text
-include/system/lang/types/BaseTypeVariable.h -text
-include/system/lang/types/Bool.h -text
-include/system/lang/types/Byte.h -text
-include/system/lang/types/Character.h -text
-include/system/lang/types/Double.h -text
-include/system/lang/types/Float.h -text
-include/system/lang/types/Integer.h -text
-include/system/lang/types/Long.h -text
-include/system/lang/types/Short.h -text
-include/system/lang/types/String.h -text
-include/system/lang/types/UnicodeString.h -text
-include/system/lang/types/Variable.h -text
-include/system/lang/unicode.h -text
 include/system/net/InetAddress.h -text
 include/system/net/NetworkInterface.h -text
 include/system/net/Packet.h -text
@@ -291,7 +266,6 @@ include/system/net/UDPSocket.h -text
 include/system/platform.h -text
 include/system/thread/Atomic.h -text
 include/system/thread/Condition.h -text
-include/system/thread/Locaker.h -text
 include/system/thread/Lockable.h -text
 include/system/thread/Locker.h -text
 include/system/thread/Mutex.h -text
@@ -307,10 +281,6 @@ include/system/util/HashTable.h -text
 include/system/util/Iterator.h -text
 include/system/util/LinkedList.h -text
 include/system/util/PriorityQueue.h -text
-include/system/util/SerializableHashTable.h -text
-include/system/util/SerializableSortedVector.h -text
-include/system/util/SerializableVector.h -text
-include/system/util/SerializableVectorMap.h -text
 include/system/util/SortedVector.h -text
 include/system/util/Timer.h -text
 include/system/util/Vector.h -text

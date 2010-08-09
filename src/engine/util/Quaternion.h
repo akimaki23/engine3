@@ -33,6 +33,15 @@ namespace engine {
 			addSerializableVariables();
 		}
 
+		inline Quaternion(const Quaternion& qt) : Object(), Serializable() {
+			w = qt.w;
+			x = qt.x;
+			y = qt.y;
+			z = qt.z;
+
+			addSerializableVariables();
+		}
+
 		/**
 		* Create a quaternion based on four scalar values.
 		* float fx = vector x
@@ -160,30 +169,32 @@ namespace engine {
 		*/
 		//inline Matrix4 toMatrix() { }
 
-		inline float getX() {
+		inline float getX() const {
 			return x;
 		}
 
-		inline float getY() {
+		inline float getY() const {
 			return y;
 		}
 
-		inline float getZ() {
+		inline float getZ() const {
 			return z;
 		}
 
-		inline float getW() {
+		inline float getW() const {
 			return w;
 		}
 
-		inline float getRadians() {
+		inline float getRadians() const {
 			float angle;
 
-			if (z * z + y * y > 0.0f) {
-				if (z > 0.f && y < 0.0f)
-					w *= -1.0f;
+			float dirW = w;
 
-				angle = 2.0f * Math::acos(z);
+			if (w * w + y * y > 0.0f) {
+				if (w > 0.f && y < 0.0f)
+					dirW *= -1.0f;
+
+				angle = 2.0f * Math::acos(dirW);
 			} else {
 				angle = 0.0f;
 			}
@@ -191,8 +202,12 @@ namespace engine {
 			return angle;
 		}
 
-		inline float getDegrees() {
-			return (getRadians() / 6.283f) * 100;
+		inline float getSpecialDegrees() const { // returns 0-100 degrees
+			return (getRadians() / 6.283f) * 100.f;
+		}
+
+		inline float getDegrees() const {
+			return (getRadians() / 6.283f) * 360.f;
 		}
 
 		inline bool isIdentity() {

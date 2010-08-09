@@ -22,6 +22,16 @@ namespace engine {
 
 		}
 
+		Coordinate(const Coordinate& ct) {
+			positionX = ct.positionX;
+			positionY = ct.positionY;
+			positionZ = ct.positionZ;
+
+			previousPositionX = ct.previousPositionX;
+			previousPositionY = ct.previousPositionY;
+			previousPositionZ = ct.previousPositionZ;
+		}
+
 		Coordinate(float x, float z, float y) {
 			positionX = x;
 			positionZ = z;
@@ -100,27 +110,27 @@ namespace engine {
 		}
 
 		// getters
-		inline float getPositionX() {
+		inline float getPositionX() const {
 			return positionX;
 		}
 
-		inline float getPositionZ() {
+		inline float getPositionZ() const {
 			return positionZ;
 		}
 
-		inline float getPositionY() {
+		inline float getPositionY() const {
 			return positionY;
 		}
 
-		inline float getPreviousPositionX() {
+		inline float getPreviousPositionX() const {
 			return previousPositionX;
 		}
 
-		inline float getPreviousPositionZ() {
+		inline float getPreviousPositionZ() const {
 			return previousPositionZ;
 		}
 
-		inline float getPreviousPositionY() {
+		inline float getPreviousPositionY() const {
 			return previousPositionY;
 		}
 

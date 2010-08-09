@@ -41,6 +41,8 @@ namespace sys {
 
 		Vector<WeakReference<Object*>*> weakReferences;
 
+		bool _destroying;
+
 	#ifdef TRACE_REFERENCES
 		VectorMap<void*, StackTrace*> referenceHolders;
 	#endif
@@ -49,13 +51,18 @@ namespace sys {
 		Object() : ReferenceCounter(), Variable() {
 			initializeCount();
 
+			_destroying = false;
+
 		#ifdef TRACE_REFERENCES
 			referenceHolders.setNullValue(NULL);
 		#endif
 		}
 
 		Object(const Object& obj) : ReferenceCounter(), Variable() {
-			_references = obj._references;
+			//_references = obj._references;
+			initializeCount();
+
+			_destroying = false;
 		}
 
 		virtual ~Object() {
@@ -65,6 +72,14 @@ namespace sys {
 		#endif
 
 			finalize();
+		}
+
+		virtual bool notifyDestroy() {
+			return true;
+		}
+
+		inline void _setDestroying(bool val) {
+			_destroying = val;
 		}
 
 		void finalize() {
@@ -86,13 +101,19 @@ namespace sys {
 			return false;
 		}
 
+		inline bool _isGettingDestroyed() const {
+			return _destroying;
+		}
+
 		inline void acquire() {
 			increaseCount();
 		}
 
 		inline void release() {
-			if (decreaseCount())
-				destroy();
+			if (decreaseCount()) {
+				if (notifyDestroy())
+					destroy();
+			}
 		}
 
 		void acquireWeak(void* ref);

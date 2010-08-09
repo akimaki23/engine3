@@ -16,12 +16,18 @@ namespace sys {
 		static const double PI = M_PI;
 		static const double DEG2RAD = M_PI / 180.0f;
 		static const double RAD2DEG = 180.0f / M_PI;
+		static const double E = 2.71828182845904523536;
 
 		static float sqrt(float number);
 
 		//static float rsqrt(float number);
 
 		//static float fabs(float f);
+
+		static float getPrecision(float num, int digits) {
+			float power = pow(10, digits);
+			return float(floor(num * power + .05f) / power);
+		}
 
 		static double acos(double arg) {
 			return ::acos(arg);
@@ -41,6 +47,10 @@ namespace sys {
 
 		static double rad2deg(double radians) {
 			return radians * RAD2DEG;
+		}
+
+		static double ln(float value) {
+			return (log10(value) / log10(E));
 		}
 	};
 
