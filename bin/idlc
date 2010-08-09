@@ -1,0 +1,1 @@
+java -cp /home/oru/workspaceOR/MMOEngine/bin/idlc.jar org.sr.idlc.compiler.Compiler $@
