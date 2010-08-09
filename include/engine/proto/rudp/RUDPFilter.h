@@ -8,64 +8,46 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/lang.h"
 
+#include "engine/log/Logger.h"
+
+#include "engine/service/ServiceSession.h"
+#include "engine/service/ServiceFilter.h"
+#include "engine/service/AbstractServiceAcceptor.h"
+
+#include "RUDPProtocol.h"
+
+#include "BaseMessage.h"
+
 namespace engine {
   namespace proto {
     namespace rudp {
 
-    class RUDPFilter {
-/*
- * void BaseProtocol::prepareSend(BasePacket* pack) {
-	if (pack->doCompression())
-		pack->setCompression(false);
+	class RUDPFilter : public ServiceFilter, public Logger {
+		MessageQueue* messageQueue;
 
-	pack->close();
+	public:
+		RUDPFilter(MessageQueue* queue);
+		RUDPFilter(const String& s, MessageQueue* queue);
 
-	StringBuffer msg;
-	msg << "SEND - " << pack->toString();
-	info(msg);
+		void handlePacket(RUDPProtocol* client, Packet* pack);
 
-	if (pack->doSequencing())
-		pack->setSequence(serverSequence++);
+		void doSessionStart(RUDPProtocol* client, Packet* pack);
+		void doSessionResponse(RUDPProtocol* client, Packet* pack);
 
-	if (pack->doCompression()) {
-		compress(pack);
-	}
+		void doDisconnect(RUDPProtocol* client, Packet* pack);
+		void doNetStatusResponse(RUDPProtocol* client, Packet* pack);
+		void doOutOfOrder(RUDPProtocol* client, Packet* pack);
+		void doAcknowledge(RUDPProtocol* client, Packet* pack);
 
-	if (pack->doEncryption()) {
-		encrypt(pack, true);
-	}
+		void processBufferedPackets(RUDPProtocol* client);
 
-	if (pack->doCRCChecking()) {
-		appendCRC(pack);
-	}
+		void handleMultiPacket(RUDPProtocol* client, Packet* pack);
 
-}
+		void handleDataChannelPacket(RUDPProtocol* client, Packet* pack);
+		void handleDataChannelMultiPacket(RUDPProtocol* client, Packet* pack, sys::uint16 size);
 
-bool BaseProtocol::processRecieve(Packet* pack) {
-	if (!testCRC(pack)) {
-		StringBuffer msg;
-		msg << "incorrect CRC\n" << pack->toString() << "\n";
-		error(msg);
-
-		return false;
-	}
-
-	decrypt(pack);
-
-	if (pack->size() < 3)
-		throw PacketIndexOutOfBoundsException(pack, 3);
-
-	if (pack->parseByte(pack->size() - 3) == 0x01) {
-		decompress(pack);
-	}
-
-	pack->removeLastBytes(3);
-
-	return true;
-}
-
- */
-    };
+		void handleFragmentedPacket(RUDPProtocol* client, Packet* pack);
+	};
 
     } // namespace rudp
   } // namespace proto
@@ -73,4 +55,5 @@ bool BaseProtocol::processRecieve(Packet* pack) {
 
 using namespace engine::proto::rudp;
 
-#endif /* RUDPFILTER_H_ */
+#endif /*RUDPFILTER_H_*/
+

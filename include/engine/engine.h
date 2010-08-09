@@ -39,10 +39,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "proto/XorEncryptionFilter.h"
 #include "proto/ZipCompressionFilter.h"
-#include "proto/rudp/BaseClient.h"
-#include "proto/rudp/BaseClientProxy.h"
+#include "proto/rudp/RUDPProtocol.h"
 #include "proto/rudp/RUDPPacket.h"
-#include "proto/rudp/BasePacketHandler.h"
 #include "proto/rudp/BaseMessage.h"
 #include "proto/rudp/StandaloneBaseMessage.h"
 

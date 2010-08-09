@@ -68,11 +68,11 @@ libengine3_a_SOURCES = \
 			engine/proto/ZipCompressionFilter.cpp \
 			engine/proto/CrcCheckingFilter.cpp \
 			engine/proto/rudp/RUDPFilter.cpp \
+			engine/proto/rudp/RUDProtocol.cpp \
 			engine/proto/rudp/RDPPacket.cpp \
 			engine/proto/rudp/BaseMultiPacket.cpp \
 			engine/proto/rudp/BaseFragmentedPacket.cpp \
 			engine/proto/rudp/BasePacketHandler.cpp \
-			engine/proto/rudp/BaseClient.cpp \
 			engine/proto/rudp/BaseClientProxy.cpp \
 			engine/proto/rudp/events/BasePacketChekupEvent.cpp \
 			engine/orb/DistributedObjectBroker.cpp \

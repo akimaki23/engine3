@@ -153,6 +153,7 @@ include/engine/proto/rudp/BaseProtocol.h -text
 include/engine/proto/rudp/PacketHandler.h -text
 include/engine/proto/rudp/RUDPFilter.h -text
 include/engine/proto/rudp/RUDPPacket.h -text
+include/engine/proto/rudp/RUDPProtocol.h -text
 include/engine/proto/rudp/RUDPSession.h -text
 include/engine/proto/rudp/StandaloneBaseMessage.h -text
 include/engine/proto/rudp/events/BaseClientCleanupEvent.h -text

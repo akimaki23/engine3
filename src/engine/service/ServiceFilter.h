@@ -15,25 +15,25 @@ namespace engine {
 
 	class ServiceFilter {
 	public:
-		void init() {
+		virtual void init() {
 		}
 
-		void sessionCreated(ServiceSession* session) {
+		virtual void sessionCreated(ServiceSession* session) {
 		}
 
-		void sessionOpened(ServiceSession* session) {
+		virtual void sessionOpened(ServiceSession* session) {
 		}
 
-		void sessionClosed(ServiceSession* session) {
+		virtual void sessionClosed(ServiceSession* session) {
 		}
 
-		void messageReceived(ServiceSession* session, Packet* message) {
+		virtual void messageReceived(ServiceSession* session, Packet* message) {
 		}
 
-		void messageSent(ServiceSession* session, Packet* message) {
+		virtual void messageSent(ServiceSession* session, Packet* message) {
 		}
 
-		void exceptionCaught(ServiceSession* session, Exception& cause) {
+		virtual void exceptionCaught(ServiceSession* session, Exception& cause) {
 		}
 	};
 

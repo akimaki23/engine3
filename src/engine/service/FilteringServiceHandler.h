@@ -16,53 +16,41 @@ namespace engine {
   namespace service {
 
 	class FilteringServiceHandler : public ServiceHandler {
-		ServiceHandler* adaptedHandler;
-
 		ServiceFilterChain* filterChain;
 
 	public:
 		FilteringServiceHandler() {
-			adaptedHandler = NULL;
-
 			filterChain = NULL;
 		}
 
 		void sessionCreated(ServiceSession* session) {
-			filterChain->fireSessionCreated(session);
-
-			adaptedHandler->sessionCreated(session);
+			if (filterChain != NULL)
+				filterChain->fireSessionCreated(session);
 		}
 
 		void sessionOpened(ServiceSession* session) {
-			filterChain->fireSessionOpened(session);
-
-			adaptedHandler->sessionOpened(session);
+			if (filterChain != NULL)
+				filterChain->fireSessionOpened(session);
 		}
 
 		void sessionClosed(ServiceSession* session) {
-			filterChain->fireSessionClosed(session);
-
-			adaptedHandler->sessionClosed(session);
+			if (filterChain != NULL)
+				filterChain->fireSessionClosed(session);
 		}
 
 		void messageReceived(ServiceSession* session, Packet* message) {
-			filterChain->fireMessageReceived(session, message);
-
-			adaptedHandler->messageReceived(session, message);
+			if (filterChain != NULL)
+				filterChain->fireMessageReceived(session, message);
 		}
 
 		void exceptionCaught(ServiceSession* session, Exception& cause) {
-			filterChain->fireExceptionCaught(session, cause);
-
-			adaptedHandler->exceptionCaught(session, cause);
-		}
-
-		void setHandler(ServiceHandler* handler) {
-			adaptedHandler = handler;
+			if (filterChain != NULL)
+				filterChain->fireExceptionCaught(session, cause);
 		}
 
 		void setFilterChain(ServiceFilterChain* chain) {
-			filterChain = chain;
+			if (filterChain != NULL)
+				filterChain = chain;
 		}
 	};
 

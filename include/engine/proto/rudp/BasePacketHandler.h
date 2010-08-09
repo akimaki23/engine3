@@ -21,31 +21,31 @@ namespace engine {
   namespace proto {
     namespace rudp {
 
-	class BasePacketHandler : public Logger {
+	class RUDPFilter : public Logger {
 		MessageQueue* messageQueue;
 
 	public:
-		BasePacketHandler();
-		BasePacketHandler(const String& s, MessageQueue* queue);
+		RUDPFilter();
+		RUDPFilter(const String& s, MessageQueue* queue);
 
-		void handlePacket(BaseClient* client, Packet* pack);
+		void handlePacket(RUDPProtocol* client, Packet* pack);
 
-		void doSessionStart(BaseClient* client, Packet* pack);
-		void doSessionResponse(BaseClient* client, Packet* pack);
+		void doSessionStart(RUDPProtocol* client, Packet* pack);
+		void doSessionResponse(RUDPProtocol* client, Packet* pack);
 
-		void doDisconnect(BaseClient* client, Packet* pack);
-		void doNetStatusResponse(BaseClient* client, Packet* pack);
-		void doOutOfOrder(BaseClient* client, Packet* pack);
-		void doAcknowledge(BaseClient* client, Packet* pack);
+		void doDisconnect(RUDPProtocol* client, Packet* pack);
+		void doNetStatusResponse(RUDPProtocol* client, Packet* pack);
+		void doOutOfOrder(RUDPProtocol* client, Packet* pack);
+		void doAcknowledge(RUDPProtocol* client, Packet* pack);
 
-		void processBufferedPackets(BaseClient* client);
+		void processBufferedPackets(RUDPProtocol* client);
 
-		void handleMultiPacket(BaseClient* client, Packet* pack);
+		void handleMultiPacket(RUDPProtocol* client, Packet* pack);
 
-		void handleDataChannelPacket(BaseClient* client, Packet* pack);
-		void handleDataChannelMultiPacket(BaseClient* client, Packet* pack, sys::uint16 size);
+		void handleDataChannelPacket(RUDPProtocol* client, Packet* pack);
+		void handleDataChannelMultiPacket(RUDPProtocol* client, Packet* pack, sys::uint16 size);
 
-		void handleFragmentedPacket(BaseClient* client, Packet* pack);
+		void handleFragmentedPacket(RUDPProtocol* client, Packet* pack);
 	};
 
     } // namespace rudp

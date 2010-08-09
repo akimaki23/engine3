@@ -14,7 +14,7 @@ namespace engine {
   namespace proto {
     namespace rudp {
 
-	class BaseClientProxy : public BaseClient {
+	class BaseClientProxy : public RUDPProtocol {
 	public:
 		BaseClientProxy();
 		BaseClientProxy(SocketImplementation* sock, SocketAddress& addr);

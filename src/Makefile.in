@@ -92,11 +92,11 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/proto/ZipCompressionFilter.$(OBJEXT) \
 	engine/proto/CrcCheckingFilter.$(OBJEXT) \
 	engine/proto/rudp/RUDPFilter.$(OBJEXT) \
+	engine/proto/rudp/RUDProtocol.$(OBJEXT) \
 	engine/proto/rudp/RDPPacket.$(OBJEXT) \
 	engine/proto/rudp/BaseMultiPacket.$(OBJEXT) \
 	engine/proto/rudp/BaseFragmentedPacket.$(OBJEXT) \
 	engine/proto/rudp/BasePacketHandler.$(OBJEXT) \
-	engine/proto/rudp/BaseClient.$(OBJEXT) \
 	engine/proto/rudp/BaseClientProxy.$(OBJEXT) \
 	engine/proto/rudp/events/BasePacketChekupEvent.$(OBJEXT) \
 	engine/orb/DistributedObjectBroker.$(OBJEXT) \
@@ -314,11 +314,11 @@ libengine3_a_SOURCES = \
 			engine/proto/ZipCompressionFilter.cpp \
 			engine/proto/CrcCheckingFilter.cpp \
 			engine/proto/rudp/RUDPFilter.cpp \
+			engine/proto/rudp/RUDProtocol.cpp \
 			engine/proto/rudp/RDPPacket.cpp \
 			engine/proto/rudp/BaseMultiPacket.cpp \
 			engine/proto/rudp/BaseFragmentedPacket.cpp \
 			engine/proto/rudp/BasePacketHandler.cpp \
-			engine/proto/rudp/BaseClient.cpp \
 			engine/proto/rudp/BaseClientProxy.cpp \
 			engine/proto/rudp/events/BasePacketChekupEvent.cpp \
 			engine/orb/DistributedObjectBroker.cpp \
@@ -555,6 +555,9 @@ engine/proto/rudp/$(DEPDIR)/$(am__dirstamp):
 engine/proto/rudp/RUDPFilter.$(OBJEXT):  \
 	engine/proto/rudp/$(am__dirstamp) \
 	engine/proto/rudp/$(DEPDIR)/$(am__dirstamp)
+engine/proto/rudp/RUDProtocol.$(OBJEXT):  \
+	engine/proto/rudp/$(am__dirstamp) \
+	engine/proto/rudp/$(DEPDIR)/$(am__dirstamp)
 engine/proto/rudp/RDPPacket.$(OBJEXT):  \
 	engine/proto/rudp/$(am__dirstamp) \
 	engine/proto/rudp/$(DEPDIR)/$(am__dirstamp)
@@ -565,9 +568,6 @@ engine/proto/rudp/BaseFragmentedPacket.$(OBJEXT):  \
 	engine/proto/rudp/$(am__dirstamp) \
 	engine/proto/rudp/$(DEPDIR)/$(am__dirstamp)
 engine/proto/rudp/BasePacketHandler.$(OBJEXT):  \
-	engine/proto/rudp/$(am__dirstamp) \
-	engine/proto/rudp/$(DEPDIR)/$(am__dirstamp)
-engine/proto/rudp/BaseClient.$(OBJEXT):  \
 	engine/proto/rudp/$(am__dirstamp) \
 	engine/proto/rudp/$(DEPDIR)/$(am__dirstamp)
 engine/proto/rudp/BaseClientProxy.$(OBJEXT):  \
@@ -783,13 +783,13 @@ mostlyclean-compile:
 	-rm -f engine/orb/object/DistributedObjectStub.$(OBJEXT)
 	-rm -f engine/proto/CrcCheckingFilter.$(OBJEXT)
 	-rm -f engine/proto/ZipCompressionFilter.$(OBJEXT)
-	-rm -f engine/proto/rudp/BaseClient.$(OBJEXT)
 	-rm -f engine/proto/rudp/BaseClientProxy.$(OBJEXT)
 	-rm -f engine/proto/rudp/BaseFragmentedPacket.$(OBJEXT)
 	-rm -f engine/proto/rudp/BaseMultiPacket.$(OBJEXT)
 	-rm -f engine/proto/rudp/BasePacketHandler.$(OBJEXT)
 	-rm -f engine/proto/rudp/RDPPacket.$(OBJEXT)
 	-rm -f engine/proto/rudp/RUDPFilter.$(OBJEXT)
+	-rm -f engine/proto/rudp/RUDProtocol.$(OBJEXT)
 	-rm -f engine/proto/rudp/events/BasePacketChekupEvent.$(OBJEXT)
 	-rm -f engine/service/AbstractServiceAcceptor.$(OBJEXT)
 	-rm -f engine/service/DatagramAcceptor.$(OBJEXT)
@@ -875,13 +875,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/object/$(DEPDIR)/DistributedObjectStub.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/proto/$(DEPDIR)/CrcCheckingFilter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/proto/$(DEPDIR)/ZipCompressionFilter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@engine/proto/rudp/$(DEPDIR)/BaseClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/proto/rudp/$(DEPDIR)/BaseClientProxy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/proto/rudp/$(DEPDIR)/BaseFragmentedPacket.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/proto/rudp/$(DEPDIR)/BaseMultiPacket.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/proto/rudp/$(DEPDIR)/BasePacketHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/proto/rudp/$(DEPDIR)/RDPPacket.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/proto/rudp/$(DEPDIR)/RUDPFilter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/proto/rudp/$(DEPDIR)/RUDProtocol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/proto/rudp/events/$(DEPDIR)/BasePacketChekupEvent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/AbstractServiceAcceptor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/service/$(DEPDIR)/DatagramAcceptor.Po@am__quote@
