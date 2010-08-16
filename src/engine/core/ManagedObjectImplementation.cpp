@@ -122,8 +122,8 @@ void ManagedObjectImplementation::queueUpdateToDatabaseTask() {
 	if (updateToDatabaseTask != NULL || persistenceLevel != 2)
 		return;
 
-	updateToDatabaseTask = new ObjectUpdateToDatabaseTask(_this);
-	updateToDatabaseTask->schedule();
+	/*updateToDatabaseTask = new ObjectUpdateToDatabaseTask(_this);
+	updateToDatabaseTask->schedule();*/
 }
 
 void ManagedObjectImplementation::setPersistent(int level) {

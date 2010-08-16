@@ -27,10 +27,10 @@ namespace engine {
 		}
 
 		O* instance() {
-			rwlock.rlock();
+			//rwlock.rlock();
 
 			if (inst == NULL && !finalized) {
-				rwlock.runlock();
+				//rwlock.runlock();
 
 				rwlock.wlock();
 
@@ -42,7 +42,7 @@ namespace engine {
 				return inst;
 			}
 
-			rwlock.runlock();
+			//rwlock.runlock();
 
 			return inst;
 		}

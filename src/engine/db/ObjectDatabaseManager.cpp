@@ -233,7 +233,9 @@ void ObjectDatabaseManager::commitLocalTransaction() {
 					info("deadlock detected while trying to deleteData iterating time " + String::valueOf(iteration), true);
 					break;
 				} else if (ret != 0) {
-					error("error while trying to deleteData :" + String::valueOf(db_strerror(ret)));
+					StringBuffer msg;
+					msg << "error while trying to deleteData :" << db_strerror(ret);
+					error(msg.toString());
 				}
 			}
 		}
