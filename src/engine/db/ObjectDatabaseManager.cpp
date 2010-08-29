@@ -50,7 +50,10 @@ ObjectDatabaseManager::~ObjectDatabaseManager() {
 }
 
 void ObjectDatabaseManager::checkpoint() {
-	databaseEnvironment->checkpoint();
+	CheckpointConfig checkpointConfig;
+	checkpointConfig.setForce(true);
+
+	databaseEnvironment->checkpoint(checkpointConfig);
 
 	if (!checkpointTask->isScheduled())
 		checkpointTask->schedule(CHECKPOINTTIME);
@@ -67,7 +70,8 @@ void ObjectDatabaseManager::openEnvironment() {
 	config.setTransactional(true);
 	config.setInitializeCache(true);
 	config.setMaxLogFileSize(1000 * 1000 * 100); // 100mb
-	config.setLockDetectMode(LockDetectMode::RANDOM);
+	//config.setLockDetectMode(LockDetectMode::RANDOM);
+	config.setLockDetectMode(LockDetectMode::YOUNGEST);
 
 	try {
 		databaseEnvironment = new Environment("databases", config);
@@ -232,7 +236,7 @@ void ObjectDatabaseManager::commitLocalTransaction() {
 					berkeleyTransaction->abort();
 					info("deadlock detected while trying to deleteData iterating time " + String::valueOf(iteration), true);
 					break;
-				} else if (ret != 0) {
+				} else if (ret != 0 && ret != DB_NOTFOUND) {
 					StringBuffer msg;
 					msg << "error while trying to deleteData :" << db_strerror(ret);
 					error(msg.toString());

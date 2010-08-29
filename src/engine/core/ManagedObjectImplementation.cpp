@@ -41,6 +41,14 @@ void ManagedObject::unlock(bool doLock) {
 	if (getPersistenceLevel() == 3)
 		updateToDatabase();
 
+/*	if (getPersistenceLevel() != 0) {
+		//return;
+
+		DOBObjectManager* objectManager = DistributedObjectBroker::instance()->getObjectManager();
+
+		objectManager->updatePersistentObject(this);
+	}*/
+
 	DistributedObjectStub::unlock(doLock);
 
 	if (_impl == NULL)

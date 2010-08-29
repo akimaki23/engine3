@@ -15,7 +15,7 @@ Logger::Logger() {
 	logFile = NULL;
 
 	doLog = true;
-	doGlobalLog = true;
+	doGlobalLog = false;
 }
 
 Logger::Logger(const char *s) {
@@ -24,7 +24,7 @@ Logger::Logger(const char *s) {
 	name = s;
 
 	doLog = true;
-	doGlobalLog = true;
+	doGlobalLog = false;
 }
 
 Logger::Logger(const String& s) {
@@ -33,7 +33,7 @@ Logger::Logger(const String& s) {
 	name = s;
 
 	doLog = true;
-	doGlobalLog = true;
+	doGlobalLog = false;
 }
 
 Logger::~Logger() {
@@ -114,12 +114,12 @@ void Logger::log(const char *msg) {
 
 		logFile->flush();
 	} else if (doGlobalLog && globalLogFile != NULL) {
-		String time;
+		/*String time;
 		getTime(time);
 
 		(*globalLogFile) << time << " [" << name << "] " << msg << "\n";
 
-		globalLogFile->flush();
+		globalLogFile->flush();*/
 	}
 }
 
