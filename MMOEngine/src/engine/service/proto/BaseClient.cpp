@@ -56,6 +56,8 @@ BaseClient::BaseClient() : DatagramServiceClient(),
 	reentrantTask = new BaseClientEvent(this);
 
 	setInfoLogLevel();
+	keepSocket = false;
+
    	setGlobalLogging(true);
    	
    	
@@ -81,6 +83,8 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
 	netRequestEvent = NULL;
 
 	reentrantTask = new BaseClientEvent(this);
+
+	keepSocket = false;
 
 	setInfoLogLevel();
    	setGlobalLogging(true);
@@ -112,6 +116,8 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
 
    	/*String prip = addr.getFullPrintableIPAddress();
    	setFileLogger("log/" + prip);*/
+
+	keepSocket = true;
 
 	setInfoLogLevel();
    	setGlobalLogging(true);
