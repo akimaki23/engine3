@@ -88,7 +88,7 @@ void Observer::setObserverType(unsigned int type) {
 		_implementation->setObserverType(type);
 }
 
-bool Observer::isObserverType(unsigned int type) {
+bool Observer::isObserverType(unsigned int type) const {
 	ObserverImplementation* _implementation = static_cast<ObserverImplementation*>(_getImplementationForRead());
 	if (_implementation == NULL) {
 		if (!deployed)
@@ -108,7 +108,7 @@ DistributedObjectServant* Observer::_getImplementation() {
 	return _impl;
 }
 
-DistributedObjectServant* Observer::_getImplementationForRead() {
+DistributedObjectServant* Observer::_getImplementationForRead() const {
 	return _impl;
 }
 
@@ -275,7 +275,7 @@ void ObserverImplementation::setObserverType(unsigned int type) {
 	observerType = type;
 }
 
-bool ObserverImplementation::isObserverType(unsigned int type) {
+bool ObserverImplementation::isObserverType(unsigned int type) const{
 	// engine/util/Observer.idl():  		return observerType == type;
 	return observerType == type;
 }
@@ -341,7 +341,7 @@ void ObserverAdapter::setObserverType(unsigned int type) {
 	(static_cast<Observer*>(stub))->setObserverType(type);
 }
 
-bool ObserverAdapter::isObserverType(unsigned int type) {
+bool ObserverAdapter::isObserverType(unsigned int type) const {
 	return (static_cast<Observer*>(stub))->isObserverType(type);
 }
 

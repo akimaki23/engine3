@@ -39,6 +39,7 @@ class QuadTreeEntry extends Observable {
 
 	public native QuadTreeEntry(QuadTreeNode n = null);
 	
+	@dirty
 	public void addInRangeObject(QuadTreeEntry obj, boolean doNotifyUpdate = true) {
 		//System::out << "adding in range object:" << obj << "\n";
 
@@ -54,6 +55,7 @@ class QuadTreeEntry extends Observable {
 		return closeobjects.get(index);
 	}*/
 
+	@dirty
 	public void removeInRangeObject(QuadTreeEntry obj) {
 		//System::out << "droping in range object:" << obj << "\n";
 
@@ -70,12 +72,14 @@ class QuadTreeEntry extends Observable {
 		}*/
 	}
 
+	@dirty
 	public void removeInRangeObject(int index) {
 		//System::out << "droping in range object with index:" << index << "\n";
 
 		closeobjects.remove(index);		
 	}
 
+	@dirty
 	public void removeInRangeObjects() {
 		//System::out << "droping  all in range objects\n";
 
@@ -91,12 +95,12 @@ class QuadTreeEntry extends Observable {
 		return closeobjects.contains(obj);
 	}*/
 
-	@read
+	@dirty
 	public abstract boolean isInRange(QuadTreeEntry obj, float range) {
 		return isInRange(obj.getPositionX(), obj.getPositionY(), range);
 	}
 
-	@read
+	@dirty
 	public boolean isInRange(float x, float y, float range) {
 	 	float rangesq = range * range;
 
@@ -109,7 +113,7 @@ class QuadTreeEntry extends Observable {
 			return false;
 	}
 
-	@read
+	@dirty
 	public float getDistanceTo(QuadTreeEntry obj) {
 		float x = obj.getPositionX();
 		float y = obj.getPositionY();
@@ -121,26 +125,27 @@ class QuadTreeEntry extends Observable {
 	}
 	
 	@local
+	@dirty
 	public SortedVector<QuadTreeEntry> getCloseObjects() {
 		return closeobjects;
 	}
 	
-	@read
+	@dirty
 	@weakReference
 	public QuadTreeEntry getParent() {
 		return parent;
 	}
 	
-	@read
+	@dirty
 	public native QuadTreeEntry getParentUnsafe();
 	
-	@read
+	@dirty
 	public native QuadTreeEntry getRootParentUnsafe();
 	
-	@read
+	@dirty
 	public abstract native boolean containsPoint(float x, float y);
 	
-	@read
+	@dirty
 	@weakReference
 	public native QuadTreeEntry getRootParent();
 
@@ -218,6 +223,7 @@ class QuadTreeEntry extends Observable {
 	}
 
 	@nativeStub
+	@dirty
 	public native abstract int compareTo(QuadTreeEntry obj);
 
 	@read
@@ -243,6 +249,7 @@ class QuadTreeEntry extends Observable {
 	}
 	
 	@nativeStub
+	@dirty
 	public abstract native unsigned long getDirtyObjectID();
 	
 	@dirty

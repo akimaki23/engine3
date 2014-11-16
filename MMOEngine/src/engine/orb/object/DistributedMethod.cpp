@@ -18,7 +18,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "engine/orb/messages/DeployObjectMessage.h"
 #include "engine/orb/messages/InvokeMethodMessage.h"
 
-DistributedMethod::DistributedMethod(DistributedObject* obj, uint32 methid) {
+DistributedMethod::DistributedMethod(const DistributedObject* obj, uint32 methid) {
 	object = obj;
 	methodID = methid;
 
@@ -99,6 +99,12 @@ float DistributedMethod::executeWithFloatReturn() {
 	execute();
 
 	return response->parseFloat();
+}
+
+double DistributedMethod::executeWithDoubleReturn() {
+	execute();
+
+	return response->parseDouble();
 }
 
 void DistributedMethod::executeWithAsciiReturn(String& value) {
@@ -188,6 +194,10 @@ void DistributedMethod::addFloatParameter(float val) {
 	invocationMessgage->insertFloat(val);
 }
 
+void DistributedMethod::addDoubleParameter(double val) {
+	invocationMessgage->insertDouble(val);
+}
+
 void DistributedMethod::addAsciiParameter(const String& ascii) {
 	invocationMessgage->insertAscii(ascii);
 }
@@ -245,6 +255,10 @@ unsigned short DistributedMethod::getUnsignedShortParameter() {
 
 float DistributedMethod::getFloatParameter() {
 	return invocationMessgage->getFloatParameter();
+}
+
+double DistributedMethod::getDoubleParameter() {
+	return invocationMessgage->getDoubleParameter();
 }
 
 String& DistributedMethod::getAsciiParameter(String& ascii) {

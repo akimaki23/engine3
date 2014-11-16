@@ -44,14 +44,21 @@ public:
 
 	unsigned long long getObjectID();
 
+	/**
+	 * Compares object ids of this object with obj
+	 * @pre { this object is locked, obj is not null }
+	 * @post {this object is locked }
+	 * @param obj SceneObject that will be compared to
+	 * @return returns 1 if this < obj, -1 if this > obj and 0 if this == obj 
+	 */
 	int compareTo(Observer* obj);
 
 	void setObserverType(unsigned int type);
 
-	bool isObserverType(unsigned int type);
+	bool isObserverType(unsigned int type) const;
 
 	DistributedObjectServant* _getImplementation();
-	DistributedObjectServant* _getImplementationForRead();
+	DistributedObjectServant* _getImplementationForRead() const;
 
 	void _setImplementation(DistributedObjectServant* servant);
 
@@ -84,11 +91,18 @@ public:
 
 	virtual unsigned long long getObjectID();
 
+	/**
+	 * Compares object ids of this object with obj
+	 * @pre { this object is locked, obj is not null }
+	 * @post {this object is locked }
+	 * @param obj SceneObject that will be compared to
+	 * @return returns 1 if this < obj, -1 if this > obj and 0 if this == obj 
+	 */
 	int compareTo(Observer* obj);
 
 	void setObserverType(unsigned int type);
 
-	virtual bool isObserverType(unsigned int type);
+	virtual bool isObserverType(unsigned int type) const;
 
 	WeakReference<Observer*> _this;
 
@@ -141,7 +155,7 @@ public:
 
 	void setObserverType(unsigned int type);
 
-	bool isObserverType(unsigned int type);
+	bool isObserverType(unsigned int type) const;
 
 };
 
