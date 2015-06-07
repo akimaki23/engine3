@@ -23,19 +23,19 @@ namespace sys {
 		VectorMapEntry() : Variable() {
 		}
 
-		VectorMapEntry(K key) : Variable() {
-			VectorMapEntry::key = key;
+		VectorMapEntry(const K& key) : Variable(), key(key) {
 		}
 
-		VectorMapEntry(K key, V value) : Variable() {
-			VectorMapEntry::key = key;
-			VectorMapEntry::value = value;
+		VectorMapEntry(const K& key, const V& value) : Variable(), key(key), value(value) {
 		}
 
-		VectorMapEntry(const VectorMapEntry& entry) : Variable() {
-			key = entry.key;
-			value = entry.value;
+		VectorMapEntry(const VectorMapEntry& entry) : Variable(), key(entry.key), value(entry.value) {
 		}
+
+#ifdef CXX11_COMPILER
+		VectorMapEntry(VectorMapEntry&& entry) : Variable(), key(std::move(entry.key)), value(std::move(entry.value)) {
+		}
+#endif
 
 		VectorMapEntry& operator=(const VectorMapEntry& entry) {
 			if (this == &entry)
@@ -46,6 +46,18 @@ namespace sys {
 
 			return *this;
 		}
+
+#ifdef CXX11_COMPILER
+		VectorMapEntry& operator=(VectorMapEntry&& entry) {
+			if (this == &entry)
+				return *this;
+
+			key = std::move(entry.key);
+			value = std::move(entry.value);
+
+			return *this;
+		}
+#endif
 
 		~VectorMapEntry() {
 
@@ -121,7 +133,15 @@ namespace sys {
 		VectorMap(int initsize, int incr);
 		VectorMap(const VectorMap<K, V>& vector);
 
+#ifdef CXX11_COMPILER
+		VectorMap(VectorMap<K, V>&& vector);
+#endif
+
 		VectorMap<K, V>& operator=(const VectorMap<K, V>& vector);
+
+#ifdef CXX11_COMPILER
+		VectorMap<K, V>& operator=(VectorMap<K, V>&& vector);
+#endif
 
 		virtual ~VectorMap();
 
@@ -138,7 +158,7 @@ namespace sys {
 
 		bool drop(const K& key);
 
-		inline void setNullValue(V val) {
+		inline void setNullValue(const V& val) {
 			nullValue = val;
 		}
 
@@ -166,6 +186,13 @@ namespace sys {
 		nullValue = vector.nullValue;
 	}
 
+#ifdef CXX11_COMPILER
+	template<class K, class V> VectorMap<K, V>::VectorMap(VectorMap<K, V>&& vector)
+						: SortedVector<VectorMapEntry<K, V> >(std::move(vector)) {
+		nullValue = vector.nullValue;
+	}
+#endif
+
 	template<class K, class V> VectorMap<K, V>& VectorMap<K, V>::operator=(const VectorMap<K, V>& vector) {
 		if (this == &vector)
 			return *this;
@@ -176,6 +203,19 @@ namespace sys {
 
 		return *this;
 	}
+
+#ifdef CXX11_COMPILER
+	template<class K, class V> VectorMap<K, V>& VectorMap<K, V>::operator=(VectorMap<K, V>&& vector) {
+		if (this == &vector)
+			return *this;
+
+		nullValue = vector.nullValue;
+
+		SortedVector<VectorMapEntry<K, V> >::operator=(std::move(vector));
+
+		return *this;
+	}
+#endif
 
 	template<class K, class V> VectorMap<K, V>::~VectorMap() {
 

@@ -26,6 +26,10 @@ namespace sys {
 			value = ref;
 		}
 
+		AtomicReference(const AtomicReference& r) : value(r.value) {
+
+		}
+
 		inline V compareAndSetReturnOld(volatile void* oldval, void* newval) {
 #ifdef CLANG_COMPILER
 #ifdef PLATFORM_64
@@ -38,7 +42,7 @@ namespace sys {
 			return (V) __sync_val_compare_and_swap (addy, (uint32)oldval, (uint32)newval);
 #endif
 #elif GCC_VERSION >= 40100
-			return __sync_val_compare_and_swap(&value, oldval, newval);
+			return __sync_val_compare_and_swap((void**)&value, (void*)oldval, (void*)newval);
 #else
 			PVOID* oldVal = (PVOID*)value;
 			InterlockedCompareExchangePointer((volatile PVOID*)&oldVal, newval, (PVOID*) oldval);
@@ -61,7 +65,7 @@ namespace sys {
 			return __sync_bool_compare_and_swap (addy, (uint32)oldval, (uint32)newval);
 #endif
 #elif GCC_VERSION >= 40100 || defined(__MINGW32__)
-			return __sync_bool_compare_and_swap (&value, oldval, newval);
+			return __sync_bool_compare_and_swap ((void**)&value, (void*)oldval, (void*)newval);
 #elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
 			//TODO: find appropriate method
 			if ( value == oldval ) {
@@ -90,7 +94,7 @@ namespace sys {
 					return (V) __sync_val_compare_and_swap (addy, (uint32)oldval, (uint32)newval);
 		#endif
 		#elif GCC_VERSION >= 40100
-					return __sync_val_compare_and_swap(value, oldval, newval);
+					return __sync_val_compare_and_swap((void**)value, (void*)oldval, (void*)newval);
 		#else
 					PVOID* oldVal = (PVOID*)value;
 					InterlockedCompareExchangePointer((volatile PVOID*)&oldVal, newval, (PVOID*) oldval);
@@ -114,11 +118,11 @@ namespace sys {
 					return __sync_bool_compare_and_swap (addy, (uint32)oldval, (uint32)newval);
 		#endif
 		#elif GCC_VERSION >= 40100 || defined(__MINGW32__)
-					return __sync_bool_compare_and_swap (value, oldval, newval);
+					return __sync_bool_compare_and_swap ((void**)value, (void*)oldval, (void*)newval);
 		#elif defined(PLATFORM_FREEBSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_CYGWIN)
 					//TODO: find appropriate method
-					if ( value == oldval ) {
-						value = newval;
+					if ( *value == *oldval ) {
+						*value = *newval;
 						return true;
 					} else {
 						return false;

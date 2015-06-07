@@ -38,7 +38,15 @@ namespace sys {
        ArrayList(int initsize, int incr);
        ArrayList(const ArrayList<E>& array);
 
+#ifdef CXX11_COMPILER
+       ArrayList(ArrayList<E>&& array);
+#endif
+
        ArrayList<E>& operator=(const ArrayList<E>& array);
+
+#ifdef CXX11_COMPILER
+       ArrayList<E>& operator=(ArrayList<E>&& array);
+#endif
 
        virtual ~ArrayList();
 
@@ -126,6 +134,22 @@ namespace sys {
 		   memcpy((void*)elementData, (void*)array.elementData, elementCount * sizeof(E));
    }
 
+#ifdef CXX11_COMPILER
+   template<class E> ArrayList<E>::ArrayList(ArrayList<E>&& array) {
+	   elementData = array.elementData;
+
+	   elementCapacity = array.elementCapacity;
+
+	   capacityIncrement = array.capacityIncrement;
+
+	   elementCount = array.elementCount;
+
+	   array.elementData = NULL;
+	   array.elementCount = 0;
+	   array.capacityIncrement = 0;
+   }
+#endif
+
    template<class E> ArrayList<E>& ArrayList<E>::operator=(const ArrayList<E>& array) {
 	   if (this == &array)
 		   return *this;
@@ -135,10 +159,39 @@ namespace sys {
 	   return *this;
    }
 
-   template<class E> ArrayList<E>::~ArrayList() {
-       destroyElements();
+#ifdef CXX11_COMPILER
+   template<class E> ArrayList<E>& ArrayList<E>::operator=(ArrayList<E>&& array) {
+   	   if (this == &array)
+   		   return *this;
 
-       free(elementData);
+   	   if (elementData != NULL) {
+   		   destroyElements();
+
+   		   free(elementData);
+   	   }
+
+   	   elementData = array.elementData;
+
+   	   elementCapacity = array.elementCapacity;
+
+   	   capacityIncrement = array.capacityIncrement;
+
+   	   elementCount = array.elementCount;
+
+   	   array.elementData = NULL;
+   	   array.elementCount = 0;
+   	   array.capacityIncrement = 0;
+
+   	   return *this;
+      }
+#endif
+
+   template<class E> ArrayList<E>::~ArrayList() {
+	   if (elementData != NULL) {
+		   destroyElements();
+
+       	   free(elementData);
+	   }
    }
 
    template<class E> void ArrayList<E>::init(int initsize, int incr) {
@@ -162,7 +215,7 @@ namespace sys {
    }
 
    template<class E> void ArrayList<E>::addAll(const ArrayList<E>& array) {
-	   for (int i= 0; i < array.size(); ++i) {
+	   for (int i = 0; i < array.size(); ++i) {
 		   const E& element = array.get(i);
 
 		   add(element);
@@ -170,9 +223,10 @@ namespace sys {
    }
 
    template<class E> bool ArrayList<E>::contains(const E& element) {
-	   for (int i= 0; i < size(); ++i) {
-		   if (element == get(i))
+	   for (int i = 0; i < size(); ++i) {
+		   if (element == get(i)) {
 			   return true;
+		   }
 	   }
 
 	   return false;

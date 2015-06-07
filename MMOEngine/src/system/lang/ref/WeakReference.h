@@ -39,6 +39,25 @@ namespace sys {
 			initializeObject(obj);
 		}
 
+#ifdef CXX11_COMPILER
+		WeakReference(WeakReference<O>&& ref) : Variable(), weakReference(ref.weakReference) {
+			ref.weakReference = NULL;
+		}
+
+		WeakReference<O>& operator=(WeakReference<O>&& ref) {
+			if (this == &ref)
+				return *this;
+
+			releaseObject();
+
+			weakReference = ref.weakReference;
+
+			ref.weakReference = NULL;
+
+			return *this;
+		}
+#endif
+
 		virtual ~WeakReference() {
 			releaseObject();
 		}
@@ -87,10 +106,8 @@ namespace sys {
 
 		template<class B>
 		Reference<B> castTo() {
-			Reference<B> stored;
-			Reference<O> strong = get();
+			Reference<B> stored = get().template castTo<B>();
 
-			stored = dynamic_cast<B>(strong.get());
 			return stored;
 		}
 
@@ -120,13 +137,10 @@ namespace sys {
 		inline Object* getReferenceUnsafe() const {
 			Object* object = NULL;
 
-//			StrongAndWeakReferenceCount* old = safeRead();
-                        StrongAndWeakReferenceCount* old = weakReference;
+			StrongAndWeakReferenceCount* old = weakReference;
 
 			if (old != NULL) {
 				object = old->getObject();
-
-//				release(old);
 			}
 
 			return object;
@@ -181,14 +195,16 @@ namespace sys {
 			return NULL;
 		}
 
-		inline void release(StrongAndWeakReferenceCount* old) const {
+		inline bool release(StrongAndWeakReferenceCount* old) const {
 			if (old == NULL)
-				return;
+				return false;
 
 			if (old->decrementAndTestAndSetWeakCount() == 0)
-				return;
+				return false;
 
 			delete old;
+
+			return true;
 		}
 
 		inline StrongAndWeakReferenceCount* newref(StrongAndWeakReferenceCount* newRef) {
@@ -199,9 +215,12 @@ namespace sys {
 				StrongAndWeakReferenceCount* p = safeRead();
 
 				if (weakReference.compareAndSet(p, newRef)) {
-					release(p);
+					bool deleted = release(p);
 
-					return p;
+					if (!deleted)
+						return p;
+					else
+						return NULL;
 				} else
 					release(p);
 			}

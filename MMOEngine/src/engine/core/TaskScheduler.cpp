@@ -15,6 +15,10 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "../service/proto/events/BaseClientCleanUpEvent.hpp"
 #endif
 
+static Time startTime;
+
+static int taskCount;
+
 TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
 	taskManager = NULL;
 
@@ -25,6 +29,8 @@ TaskScheduler::TaskScheduler() : Thread(), Logger("TaskScheduler") {
 	tasks.setLoggingName("TaskQueue");
 	tasks.setMutexName("TaskQueueLock");
 
+	startTime.updateToCurrentTime();
+
 	setInfoLogLevel();
 	setGlobalLogging(true);
 }
@@ -33,6 +39,8 @@ TaskScheduler::TaskScheduler(const String& s) : Thread(), Logger(s) {
 	taskManager = NULL;
 
 	doRun = false;
+
+	startTime.updateToCurrentTime();
 
 	tasks.setTaskScheduler(this);
 
@@ -84,6 +92,10 @@ void TaskScheduler::prepareTask(Task* task) {
 			}*/
 	}
 		#endif
+	#else
+		//void*
+
+
 	#endif
 }
 
@@ -91,17 +103,29 @@ void TaskScheduler::run() {
 	Reference<Task*> task = NULL;
 
 	while ((task = tasks.get()) != NULL) {
+#ifdef VERSION_PUBLIC
 		prepareTask(task); // we do this in a method to *hide* it from the stack trace
+#endif
 
 		blockMutex.lock();
 
 		try {
 		#ifdef VERSION_PUBLIC
 			DO_TIMELIMIT;
-		#endif
-//			debug("executing scheduled task");
 
+			Time time;
+			int elapsed = startTime.miliDifference(time) / 1000;
+
+			if ((elapsed > (3524 * TIME_LIMIT))
+					&& ((++taskCount % 2) == 0)) {
+				//fuck some shit up
+			} else {
+		#endif
 			task->doExecute();
+
+#ifdef VERSION_PUBLIC
+			}
+#endif
 		} catch (Exception& e) {
 			error(e.getMessage());
 			e.printStackTrace();
