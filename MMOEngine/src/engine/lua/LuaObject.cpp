@@ -260,7 +260,11 @@ double LuaObject::getDoubleAt(int idx) {
 }
 
 int LuaObject::getTableSize() {
+#if LUA_VERSION_NUM > 501
+	return (int) lua_rawlen(L, -1);
+#else
 	return luaL_getn(L, -1);
+#endif
 }
 
 bool LuaObject::isValidTable() {
