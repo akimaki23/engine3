@@ -58,6 +58,10 @@ namespace sys {
 				lockable = NULL;
 			}
 		}
+		
+		inline Lockable* getLockable() {
+		        return lockable;
+                }
 	};
 
   } // namespace thread

@@ -23,9 +23,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "system/platform.h"
 
-/*template<> unsigned int TypeInfoAtomicPointer<const char*>::hashCode(const char*& val) {
-	return String(val).hashCode();
-}*/
+template<> unsigned int TypeInfoAtomicBase<const char*>::hashCode(const char* const& val) {
+	return Long::hashCode((uint64)val);
+}
 
 template<> unsigned int TypeInfoAtomicBase<bool>::hashCode(const bool& val) {
 	return Bool::hashCode(val);
@@ -412,6 +412,10 @@ template<> bool TypeInfoAtomicBase<double>::parseFromBinaryStream(void* address,
 	*(double*)address = stream->readDouble();
 
 	return true;
+}
+
+template<> const char* TypeInfoAtomicBase<const char*>::nullValue() {
+        return NULL;
 }
 
 template<> uint8 TypeInfoAtomicBase<uint8>::nullValue() {

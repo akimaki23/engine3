@@ -11,6 +11,8 @@ Time Logger::starttime;
 
 Logger Logger::console("Console");
 
+Mutex Logger::writeLock;
+
 Logger::Logger() {
 	logFile = NULL;
 
@@ -110,10 +112,14 @@ void Logger::log(const char *msg) const {
 		return;
 
 	//Locker locker(&writeLock);
+	
+//	return;
 
 	if (logLevel > LOG && logFile != NULL) {
 		FileWriter* logFile = const_cast<FileWriter*>(this->logFile);
 
+		//Locker locker(&writeLock);
+		
 		String time;
 		getTime(time);
 
@@ -123,13 +129,13 @@ void Logger::log(const char *msg) const {
 	} else if (doGlobalLog && globalLogFile != NULL) {
 		FileWriter* globalLogFile = const_cast<FileWriter*>(this->globalLogFile.get());
 
-		String time;
+/*		String time;
 		getTime(time);
 
 		(*globalLogFile) << time << " [" << name << "] " << msg << "\n";
 
 		globalLogFile->flush();
-		
+*/		
 	}
 }
 

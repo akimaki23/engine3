@@ -238,9 +238,22 @@ int UnicodeString::indexOf(const UnicodeString& str, int startPos) const {
 	return -1;
 }
 
-UnicodeString UnicodeString::subString(int beg, int end) const {
+UnicodeString UnicodeString::subString(int beginIndex, int endIndex) const {
+	if (beginIndex < 0 || beginIndex > count)
+		throw ArrayIndexOutOfBoundsException(beginIndex);
+	else if (endIndex < 0 || endIndex > count)
+		throw ArrayIndexOutOfBoundsException(endIndex);
+	else if (beginIndex > endIndex)
+		throw ArrayIndexOutOfBoundsException(beginIndex);
+
 	UnicodeString nstr;
-	nstr.append(uString + beg, end - beg);
+
+	if (beginIndex != endIndex) {
+		nstr.append(uString + beginIndex, endIndex - beginIndex);	
+	}	
+
+/*	UnicodeString nstr;
+	nstr.append(uString + beg, end - beg);*/
 
 	return nstr;
 }

@@ -33,7 +33,7 @@ public:
 	bool contains(const ManagedReference<QuadTreeEntry*>& o) const {
 		ReadLocker locker(&mutex);
 
-		bool ret = find(o) != -1;
+		bool ret = SortedVector<ManagedReference<QuadTreeEntry*> >::contains(o);
 
 		return ret;
 	}

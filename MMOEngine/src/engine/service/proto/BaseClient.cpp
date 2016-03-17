@@ -25,6 +25,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/stm/TransactionalMemoryManager.h"
 
+Logger* BaseClient::clientErrorLogger = NULL;
+
 class AcknowledgeClientPackets : public Task {
         Reference<BaseClient*> client;
         uint16 seq;
@@ -53,10 +55,10 @@ BaseClient::BaseClient() : DatagramServiceClient(),
 
 	reentrantTask = new BaseClientEvent(this);
 
-	keepSocket = false;
-
-	setDebugLogLevel();
+	setInfoLogLevel();
    	setGlobalLogging(true);
+   	
+   	
 
    	//reentrantTask->schedulePeriodic(10, 10);
 }
@@ -73,8 +75,6 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
 	netRequestEvent = NULL;
 
 	reentrantTask = new BaseClientEvent(this);
-
-	keepSocket = false;
 
 	setInfoLogLevel();
    	setGlobalLogging(true);
@@ -101,8 +101,6 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
    	/*String prip = addr.getFullPrintableIPAddress();
    	setFileLogger("log/" + prip);*/
 
-	keepSocket = true;
-
 	setInfoLogLevel();
    	setGlobalLogging(true);
 
@@ -127,9 +125,6 @@ BaseClient::~BaseClient() {
 
 		netRequestEvent = NULL;
 	}
-
-	if (!keepSocket)
-		ServiceClient::close();
 
 	debug("deleted");
 }
@@ -213,10 +208,6 @@ void BaseClient::close() {
 	reportStats();
 
 	closeFileLogger();
-
-	//ServiceClient::close();
-
-	debug("client resources closed");
 }
 
 void BaseClient::send(Packet* pack, bool doLock) {
@@ -376,7 +367,7 @@ void BaseClient::run() {
 	lock();
 
 	try {
-	        for (int i = 0; i < 8; ++i) {
+	        for (int i = 0; i < 4; ++i) {
 		if (isAvailable()) {
 			BasePacket* pack = getNextSequencedPacket();
 			if (pack == NULL) {
@@ -411,7 +402,6 @@ void BaseClient::run() {
 			pack->setTimestamp();
 
 			//prepareSend(pack);
-			
 			prepareSequence(pack);
 			if (pack->getSequence() != (uint32) realServerSequence++) {
 				StringBuffer msg;
@@ -420,20 +410,23 @@ void BaseClient::run() {
 			}
 			
 			unlock();
-
-			prepareEncryptionAndCompression(pack);
+			
+			try {
+        			prepareEncryptionAndCompression(pack);
+			} catch (...) {
+			        lock();
+			        
+			        throw;
+			}
 			
 			lock();
-			
+
+			sequenceBuffer.add(pack);
 			if (!DatagramServiceClient::send(pack)) {
 				StringBuffer msg;
 				msg << "LOSING (" << pack->getSequence() << ") " /*<< pack->toString()*/;
 				debug(msg);
 			}
-			
-			//lock();
-			
-			sequenceBuffer.add(pack);
 
 			if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
 				reentrantTask->scheduleInIoScheduler(10);
@@ -479,7 +472,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 			
                 try {
                         if (!checkupEvent->isScheduled()) {
-                                checkupEvent->schedule(5);
+                                checkupEvent->scheduleInIoScheduler(5);
                         }
                 } catch (...) {
                 }
@@ -491,7 +484,7 @@ BasePacket* BaseClient::getNextSequencedPacket() {
         
                 
 
-		if (sendBuffer.size() > 6000) {
+		if (sendBuffer.size() > 30000) {
 			StringBuffer msg;
 			msg << "WARNING - send buffer overload [" << sendBuffer.size() << "]";
 			error(msg);
@@ -517,25 +510,14 @@ bool BaseClient::validatePacket(Packet* pack) {
 	uint16 seq = pack->parseNetShort();
 
 	Locker locker(this);
-
-	/*if (clientSequence % 0xFF == 0) {
-		info("current sequence " + String::valueOf((uint64) clientSequence), true);
-	}*/
-
-#ifdef VERSION_PUBLIC
-		if (seq < clientSequence) {
-#else
-		if (seq < (clientSequence & 0xFFFF)) {
-#endif
+		
+	if (seq < (clientSequence & 0xFFFF)) {
 		//acknowledgeClientPackets(seq);
 		Core::getTaskManager()->executeTask(new AcknowledgeClientPackets(this, seq), 9);
+		
 
 		return false;
-#ifdef VERSION_PUBLIC
-		} else if (seq > clientSequence) {
-#else
-		} else if (seq > (clientSequence & 0xFFFF)) {
-#endif
+	} else if (seq > (clientSequence & 0xFFFF)) {
 		BasePacket* packet = new BasePacket(pack, seq);
 		receiveBuffer.put(packet);
 
@@ -600,6 +582,7 @@ Packet* BaseClient::getBufferedPacket() {
 
 BasePacket* BaseClient::recieveFragmentedPacket(Packet* pack) {
 	//Logger::console.debug("recieveFragmentedPacket " + pack->toStringData());
+	Locker wlocker(this);
 
 	BasePacket* packet = NULL;
 
@@ -1051,7 +1034,7 @@ void BaseClient::requestNetStatus() {
 }
 
 bool BaseClient::checkNetStatus() {
-	return false;
+//	return false;
 
 	lock();
 
@@ -1150,6 +1133,14 @@ void BaseClient::notifyReceivedSeed(uint32 seed) {
 
 void BaseClient::disconnect(const String& msg, bool doLock) {
 	error(msg);
+
+   	if (clientErrorLogger == NULL) {
+   	        clientErrorLogger = new Logger("BaseClient");
+   	        clientErrorLogger->setFileLogger("log/client_errors.log", true);
+   	        clientErrorLogger->setLogging(true);
+        }
+	
+	clientErrorLogger->error(msg);
 
 	setError();
 	disconnect(doLock);

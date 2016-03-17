@@ -102,20 +102,21 @@ extern "C" int isinf (double);
 #endif
 
 //#define WMB() __asm__ __volatile__ ("" ::: "memory");
-#if GCC_VERSION >= 40100
+//#if GCC_VERSION >= 40100
 #define WMB() __sync_synchronize()
-#else
-#define WMB()
-#endif
+//#else
+//#define WMB()
+//#endif
 
 #ifdef __clang__
 #define CLANG_COMPILER
 #endif
 
 #if __cplusplus >= 201103L
-#define	CXX11_COMPILER
+#define CXX11_COMPILER
 #include <utility>
 #endif
+
 
 namespace sys {
 	typedef unsigned long long uint64;
@@ -156,7 +157,7 @@ namespace sys {
 	//#define TRACE_LOCKS
 
 	//#define TRACE_REFERENCING
-	#define LINE_TRACING
+	//#define LINE_TRACING
 	//#define TRACE_REFERENCES
 
 	//#define TRACE_TASKS

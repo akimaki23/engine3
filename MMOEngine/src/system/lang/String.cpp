@@ -883,3 +883,4 @@ char* String::strrstr(const char* s, int slen, const char* t, int tlen) {
 
 	return NULL;
 }
+

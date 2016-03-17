@@ -39,6 +39,8 @@ void* Thread::executeThread(void* th) {
 
 	mysql_thread_init();
 
+//	pthread_setname_np(impl->thread, impl->name.toCharArray());
+
 	impl->run();
 
 	if (impl->isDetached())

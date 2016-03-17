@@ -2,6 +2,8 @@
 
 #include "GdbStub.h"
 
+#include <vector>
+
 GdbStub::GdbStub() : logFile(NULL) {
 }
 
@@ -29,7 +31,15 @@ void GdbStub::initialize(pid_t pid) {
 
 void GdbStub::run() {
 	printStackTrace();
-	printRegisters();
+	//printRegisters();
+}
+
+void addGDBArgument(std::vector<char*>& args, const char* arg) {
+	char* str = (char*) malloc(128);
+
+	strcpy(str, arg);
+
+	args.push_back(str);
 }
 
 void GdbStub::printStackTrace() {
@@ -40,19 +50,50 @@ void GdbStub::printStackTrace() {
 	if (!pid) {
 		pipe.redirectFile(fileno(stdout));
 
+		//Vector<>
+/*
+		std::vector<char*> arguments;
+
+		addGDBArgument(arguments, "gdb");
+		addGDBArgument(arguments, "-pid");
+		addGDBArgument(arguments, processPid.toCharArray());
+		addGDBArgument(arguments, "--batch");
+		addGDBArgument(arguments, "-f");
+		addGDBArgument(arguments, "-n");
+		addGDBArgument(arguments, "-ex");
+		addGDBArgument(arguments, "set pagination off");
+
+		for (int i = 1; i < 3; ++i) {
+			char str[128];
+
+			sprintf(str, "thread %d", i);
+
+			addGDBArgument(arguments, "-ex");
+			addGDBArgument(arguments, str);
+
+			addGDBArgument(arguments, "-ex");
+			addGDBArgument(arguments, "bt full");
+		}
+
+		arguments.push_back(NULL);*/
+
 		char* argv[] = {"gdb",
 				"--batch", "-f", "-n",
 				"-ex", "set pagination off",
-				"-ex", "thread",
-				"-ex", "bt full",
+				"-ex", "thread apply all bt full",
+				"-ex", "info registers",
+/*				"-ex", "bt full",
+				"-ex", "thread 2",
+				"-ex", "bt full",*/
 				"-pid", const_cast<char*>(processPid.toCharArray()),
 				NULL};
 
+		//execvp("gdb", &arguments[0]);
 		execvp("gdb", argv);
 
 		assert(0);
 	} else {
-		wait();
+		//wait();
 
 		logFile->writeLine("Stack Trace:");
 
@@ -210,6 +251,8 @@ void GdbStub::writeOutput() {
 			continue;
 
 		logFile->write(line);
+
+		//printf("read line from hui:%s\n", line);
 	}
 }
 

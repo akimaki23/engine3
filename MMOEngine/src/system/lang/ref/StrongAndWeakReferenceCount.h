@@ -25,9 +25,14 @@ public:
 		strongReferenceCount(strongCount), weakReferenceCount(weakCount), object(obj) {
 	}
 
-	StrongAndWeakReferenceCount(const StrongAndWeakReferenceCount& r) :
-		strongReferenceCount(r.strongReferenceCount), weakReferenceCount(r.weakReferenceCount),
-		object(r.object) {
+	StrongAndWeakReferenceCount(const StrongAndWeakReferenceCount& r) {
+		strongReferenceCount = r.strongReferenceCount;
+		weakReferenceCount = r.weakReferenceCount;
+		object = r.object;
+	}
+	
+	~StrongAndWeakReferenceCount() {
+	        object = NULL;
 	}
 
 	StrongAndWeakReferenceCount& operator=(const StrongAndWeakReferenceCount& r) {

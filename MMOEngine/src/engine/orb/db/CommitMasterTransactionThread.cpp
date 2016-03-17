@@ -74,7 +74,7 @@ int i = 0;
                          
                          object = NULL;
 		} else if (object->_isUpdated() && !object->_isDeletedFromDatabase()) {
-                        printf("%s refs:%d\n", TypeInfo<DistributedObject>::getClassName(object).toCharArray(), object->getReferenceCount());		
+                        //printf("%s refs:%d\n", TypeInfo<DistributedObject>::getClassName(object).toCharArray(), object->getReferenceCount());		
 		}
 		
 		if ((((j + 1) % 10000) == 0) || ((i + 1) % 100) == 0) {

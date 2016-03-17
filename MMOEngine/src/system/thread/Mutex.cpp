@@ -13,7 +13,7 @@ void Mutex::lock(bool doLock) {
 	if (!doLock)
 		return;
 
-	lockAcquiring();
+	//lockAcquiring("w");
 
 	#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 		int res = pthread_mutex_lock(&mutex);
@@ -40,7 +40,8 @@ void Mutex::lock(bool doLock) {
 		lockTime->updateToCurrentTime();
 	#endif
 
-	lockAcquired();
+	//lockAcquired("w");
+	threadLockHolder = Thread::getCurrentThread();
 }
 
 void Mutex::lock(Mutex* m) {
@@ -55,7 +56,7 @@ void Mutex::lock(Mutex* m) {
 		return;
 	}
 
-	lockAcquiring(m);
+	//lockAcquiring(m, "w");
 
 	while (pthread_mutex_trylock(&mutex)) {
 		#ifndef TRACE_LOCKS
@@ -73,7 +74,9 @@ void Mutex::lock(Mutex* m) {
 		#endif
 	}
 
-	lockAcquired(m);
+	//lockAcquired(m, "w");
+
+	threadLockHolder = Thread::getCurrentThread();
 }
 
 void Mutex::lock(Lockable* lockable) {
@@ -88,7 +91,7 @@ void Mutex::lock(Lockable* lockable) {
 		return;
 	}
 
-	lockAcquiring(lockable);
+	//lockAcquiring(lockable, "w");
 
 	while (pthread_mutex_trylock(&mutex)) {
 		lockable->unlock();
@@ -98,7 +101,9 @@ void Mutex::lock(Lockable* lockable) {
 		lockable->lock();
 	}
 
-	lockAcquired(lockable);
+	//lockAcquired(lockable, "w");
+	
+	threadLockHolder = Thread::getCurrentThread();
 }
 
 bool Mutex::tryLock() {
@@ -118,7 +123,9 @@ void Mutex::unlock(bool doLock) {
 	if (!doLock)
 		return;
 		
-	lockReleasing();
+	//lockReleasing("w");
+
+	threadLockHolder = NULL;
 
 	int res = pthread_mutex_unlock(&mutex);
 	if (res != 0) {
@@ -131,5 +138,5 @@ void Mutex::unlock(bool doLock) {
 		StackTrace::printStackTrace();
 	}
 
-	lockReleased();
+	//lockReleased("w");
 }

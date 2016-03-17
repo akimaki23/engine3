@@ -853,7 +853,7 @@ SortedVector<ManagedReference<QuadTreeEntry* > >* QuadTreeEntryImplementation::g
 }
 
 ManagedWeakReference<QuadTreeEntry* > QuadTreeEntryImplementation::getParent() {
-	// engine/util/u3d/QuadTreeEntry.idl():  		return parent;
+	// engine/util/u3d/QuadTreeEntry.idl():  			return parent;
 	return parent;
 }
 
@@ -952,8 +952,12 @@ void QuadTreeEntryImplementation::clearBounding() {
 }
 
 void QuadTreeEntryImplementation::setParent(QuadTreeEntry* par) {
-	// engine/util/u3d/QuadTreeEntry.idl():  		parent = par;
+	// engine/util/u3d/QuadTreeEntry.idl():  		}
+{
+	Locker _locker((&parentLock));
+	// engine/util/u3d/QuadTreeEntry.idl():  			parent = par;
 	parent = par;
+}
 }
 
 /*

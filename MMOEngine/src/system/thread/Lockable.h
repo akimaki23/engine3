@@ -1,5 +1,4 @@
 /*
-Copyright (C) 2007 <SWGEmu>. All rights reserved.
 Distribution of this file for usage outside of Core3 is prohibited.
 */
 
@@ -34,7 +33,7 @@ namespace sys {
 	protected:
 		//String lockName;
 
-		Thread* threadLockHolder;
+		volatile Thread* threadLockHolder;
 		AtomicInteger readLockCount;
 
 #ifdef TRACE_LOCKS
@@ -65,7 +64,7 @@ namespace sys {
 		virtual void unlock(bool doLock = true) = 0;
 
 	protected:
-		inline void lockAcquiring(const char* modifier = "") {
+/*		inline void lockAcquiring(const char* modifier = "") {
 		#ifdef LOG_LOCKS
 			int cnt = lockCount.increment();
 
@@ -85,6 +84,7 @@ namespace sys {
 							<< modifier << "lock #" << cnt << "\n";
 		#endif
 		}
+		
 
 		inline void lockAcquired(const char* modifier = "") {
 		#ifdef LOG_LOCKS
@@ -99,8 +99,11 @@ namespace sys {
 			if (modifier[0] != 'r')
 				refreshTrace();
 		#endif
+		        //if (modifier[0] == 'w')
 
-			threadLockHolder = Thread::getCurrentThread();
+				WMB();
+        			threadLockHolder = Thread::getCurrentThread();
+				
 		}
 
 		inline void lockAcquired(Lockable* lockable, const char* modifier = "") {
@@ -117,12 +120,15 @@ namespace sys {
 			if (modifier[0] != 'r')
 				refreshTrace();
 		#endif
-
-			threadLockHolder = Thread::getCurrentThread();
+		        //if (modifier[0] == 'w')i
+				WMB();
+			        threadLockHolder = Thread::getCurrentThread();
 		}
 
 		inline void lockReleasing(const char* modifier = "") {
-			threadLockHolder = NULL;
+		        WMB();
+		        //if (modifier[0] == 'w')
+			        threadLockHolder = NULL;
 
 		#ifdef TRACE_LOCKS
 			if (modifier[0] != 'r') {
@@ -146,7 +152,7 @@ namespace sys {
 							<< "] released " << modifier << "lock #" << currentCount << "\n";
 		#endif
 		}
-
+*/
 		void traceDeadlock(const char* modifier = "");
 
 		inline void refreshTrace() {
@@ -196,14 +202,17 @@ namespace sys {
 
 	public:
 		inline bool isLockedByCurrentThread() const {
+			WMB();
+
 			return threadLockHolder == Thread::getCurrentThread();
 		}
 
-		inline bool isReadLocked() const {
-			 return readLockCount > 0;
-		}
+                inline bool isReadLocked() const {
+                         return readLockCount > 0;
+                }
 
-		inline Thread* getLockHolderThread() {
+		inline volatile Thread* getLockHolderThread() {
+			WMB();
 			return threadLockHolder;
 		}
 

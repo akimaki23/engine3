@@ -37,10 +37,10 @@ int Pipe::readLine(char* buf, int len) {
 
 		//printf("red %02i (%p)\n", (int) *buf, buf);
 
-		if (*buf == '\n') {
+	/*	if (*buf == '\n') {
 			++buf;
 			break;
-		}
+		}*/
 	}
 
 	*buf = 0;

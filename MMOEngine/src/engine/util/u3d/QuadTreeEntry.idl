@@ -20,6 +20,7 @@ import engine.util.u3d.Vector3;
 include engine.util.u3d.Coordinate;
 import engine.util.u3d.QuadTree;
 import engine.util.u3d.QuadTreeNode;
+import system.thread.Mutex;
 
 class QuadTreeEntry extends Observable {
 	@dereferenced
@@ -36,6 +37,9 @@ class QuadTreeEntry extends Observable {
 	transient protected CloseObjectsVector closeobjects;
 
 	protected float radius;
+
+	@dereferenced
+	protected transient Mutex parentLock;
 
 	public native QuadTreeEntry(QuadTreeNode n = null);
 	
@@ -133,7 +137,9 @@ class QuadTreeEntry extends Observable {
 	@dirty
 	@weakReference
 	public QuadTreeEntry getParent() {
-		return parent;
+		//synchronized (parentLock) {
+			return parent;
+		//}
 	}
 	
 	@dirty
@@ -281,6 +287,8 @@ class QuadTreeEntry extends Observable {
 	}
 	
 	public abstract void setParent(QuadTreeEntry par) {
-		parent = par;
+		synchronized (parentLock) {
+			parent = par;
+		}
 	}
 }

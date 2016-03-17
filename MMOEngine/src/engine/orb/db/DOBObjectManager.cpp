@@ -282,6 +282,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 	Vector<DistributedObject* >* objectsToDeleteFromRAM = new Vector<DistributedObject* >();
 
 #ifdef PRINT_OBJECT_COUNT
+asd
 	VectorMap<String, int> inRamClassCount;
 	inRamClassCount.setNullValue(0);
 
@@ -335,7 +336,7 @@ void DOBObjectManager::updateModifiedObjectsToDatabase() {
 //	delete objectsToDeleteFromRAM;
 
 #ifdef PRINT_OBJECT_COUNT
-
+asdfasdogihdfogih
 	VectorMap<int, String> orderedMap(inRamClassCount.size(), 0);
 	orderedMap.setAllowDuplicateInsertPlan();
 	

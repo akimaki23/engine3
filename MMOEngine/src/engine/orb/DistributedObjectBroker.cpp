@@ -58,12 +58,14 @@ DistributedObjectBroker* DistributedObjectBroker::initialize(const String& addr,
 	inst->address = addr;
 	inst->port = port;
 
+	/*
 	try {
 		if (addr.isEmpty())
 			inst->start(port);
 	} catch (const Exception& e) {
 		inst->address = "127.0.0.1";
 	}
+	*/
 
 	inst->initialize();
 

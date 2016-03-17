@@ -72,8 +72,8 @@ namespace engine {
 
 		int acknowledgedServerSequence, realServerSequence;
 		int resentPackets;
-
-		bool keepSocket;
+		
+		static Logger* clientErrorLogger;
 
 	public:
 		static const int NETSTATUSCHECKUP_TIMEOUT = 50000;

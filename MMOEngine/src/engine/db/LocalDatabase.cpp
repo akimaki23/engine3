@@ -150,8 +150,8 @@ Stream* LocalDatabase::compress(Stream* data) {
 }
 
 void LocalDatabase::uncompress(void* data, uint64 size, ObjectInputStream* decompressedData) {
-	char outputData[CHUNK_SIZE];
-	//char* outputData = (char*) malloc(CHUNK_SIZE);
+	//char outputData[CHUNK_SIZE];
+	char* outputData = (char*) malloc(CHUNK_SIZE);
 
 	try {
 		z_stream packet;
@@ -176,6 +176,8 @@ void LocalDatabase::uncompress(void* data, uint64 size, ObjectInputStream* decom
 				decompressedData->writeStream((char*)data, size);
 
 				inflateEnd(&packet);
+				
+				free(outputData);
 
 				return;
 			}
@@ -193,7 +195,7 @@ void LocalDatabase::uncompress(void* data, uint64 size, ObjectInputStream* decom
 		assert(0 && "LocalDatabase::uncompress");
 	}
 
-	//free(outputData);
+	free(outputData);
 }
 
 int LocalDatabase::getData(Stream* inputKey, ObjectInputStream* objectData) {
@@ -284,7 +286,7 @@ void LocalDatabase::compressDatabaseEntries(engine::db::berkley::Transaction* tr
 	if (compression)
 		return;
 
-	HashSet<uint64> compressed;
+//	HashSet<uint64> compressed;
 
 	LocalDatabaseIterator iterator(transaction, this);
 
@@ -298,6 +300,30 @@ void LocalDatabase::compressDatabaseEntries(engine::db::berkley::Transaction* tr
 		keyStream.copy(key);
 		key->reset();
 
+		
+		
+		try {
+			//data.reset();
+			
+			uint16 magic = data.readShort();
+			
+			if (magic == 0x9c78) { //compressed
+				data.clear();
+				keyStream.clear();
+				
+				compression = false;
+				continue;
+			}
+			
+			data.reset();
+		} catch (Exception& e) {
+			data.clear();
+			keyStream.clear();
+			
+			compression = false;
+			continue;
+		}
+		
 		ObjectOutputStream* dataNew = new ObjectOutputStream();
 		data.copy(dataNew);
 		dataNew->reset();

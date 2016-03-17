@@ -180,7 +180,7 @@ void ChildProcess::printCrash() {
 	gdb.initialize(pid);
 
 	gdb.printStackTrace();
-	gdb.printRegisters();
+//	gdb.printRegisters();
 }
 
 void ChildProcess::printDeadlock() {

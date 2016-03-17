@@ -29,8 +29,9 @@ TimedTaskQueue::~TimedTaskQueue() {
 }
 
 bool TimedTaskQueue::add(Task* task, uint64 delay) {
-	condMutex->lock();
-
+	//condMutex->lock();
+	Locker locker(condMutex);
+	
 	if (task->isQueued())
 		remove(task, false);
 
@@ -39,13 +40,14 @@ bool TimedTaskQueue::add(Task* task, uint64 delay) {
 
 	bool result = add(task, false);
 
-	condMutex->unlock();
+	//condMutex->unlock();
 
 	return result;
 }
 
 bool TimedTaskQueue::add(Task* task, Time& time) {
-	condMutex->lock();
+	//condMutex->lock();
+	Locker locker(condMutex);
 
 	if (task->isQueued())
 		remove(task, false);
@@ -54,7 +56,7 @@ bool TimedTaskQueue::add(Task* task, Time& time) {
 
 	bool result = add(task, false);
 
-	condMutex->unlock();
+	//condMutex->unlock();
 
 	return result;
 }
@@ -66,6 +68,8 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 		condMutex->unlock(doLock);
 		return false;
 	}
+
+	try {
 
 	if (task->isQueued())
 		remove(task, false);
@@ -100,6 +104,9 @@ bool TimedTaskQueue::add(Task* task, bool doLock) {
 		signal(condMutex);
 	}
 
+	} catch (...) {
+	}
+
 	condMutex->unlock(doLock);
 
 	return true;
@@ -113,6 +120,7 @@ bool TimedTaskQueue::addAll(PriorityQueue& queue, bool doLock) {
 		return false;
 	}
 
+	try {
 	Task* task = (Task*) queue.peak();
 
 	PriorityQueue::merge(queue);
@@ -120,6 +128,8 @@ bool TimedTaskQueue::addAll(PriorityQueue& queue, bool doLock) {
 	if (PriorityQueue::peak() == task && waitingForTask) {
 		changePlan = true;
 		signal(condMutex);
+	}
+	} catch (...) {
 	}
 
 	condMutex->unlock(doLock);
@@ -129,7 +139,10 @@ bool TimedTaskQueue::addAll(PriorityQueue& queue, bool doLock) {
 
 Task* TimedTaskQueue::get() {
 	condMutex->lock();
+	
+	Task* task = NULL;
 
+	try {
 	waitingForTask = true;
 
 	while (true) {
@@ -194,7 +207,7 @@ Task* TimedTaskQueue::get() {
 			break;
 	}
 
-	Task* task = (Task*) PriorityQueue::poll();
+	task = (Task*) PriorityQueue::poll();
 
 	assert(task->clearTaskScheduler());
 
@@ -221,6 +234,10 @@ Task* TimedTaskQueue::get() {
 	#endif
 
 	waitingForTask = false;
+
+	} catch (...) {
+	}
+
 	condMutex->unlock();
 
 	return task;
@@ -229,6 +246,7 @@ Task* TimedTaskQueue::get() {
 bool TimedTaskQueue::remove(Task* task, bool doLock) {
 	condMutex->lock(doLock);
 
+	try {
 	if (!task->isQueued()) {
 		condMutex->unlock(doLock);
 
@@ -266,6 +284,8 @@ bool TimedTaskQueue::remove(Task* task, bool doLock) {
 	if (waitingForTask && next == task) {
 		changePlan = true;
 		signal(condMutex);
+	}
+	} catch (...) {
 	}
 
 	condMutex->unlock(doLock);

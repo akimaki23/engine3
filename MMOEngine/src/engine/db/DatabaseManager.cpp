@@ -48,7 +48,7 @@ DatabaseManager::~DatabaseManager() {
 	delete databaseEnvironment;
 	databaseEnvironment = NULL;
 
-	//checkpointTask->cancel();
+	checkpointTask->cancel();
 
 	info("closed");
 }
@@ -75,7 +75,7 @@ void DatabaseManager::openEnvironment() {
 	config.setThreadCount(512);
 	config.setTransactional(true);
 	config.setInitializeCache(true);
-	uint32 logFileSize = 100;
+	uint32 logFileSize = 4000;
 
 	logFileSize = logFileSize * 1024 * 1024;
 	config.setMaxLogFileSize(logFileSize); // 3gb
@@ -224,7 +224,7 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 		db->getDatabaseName(name);
 
 		info("converting database " + name, true);
-
+/*
 		ObjectDatabase* objectDatabase = dynamic_cast<ObjectDatabase*>(db);
 
 		ObjectDatabaseIterator iterator(transaction, db);
@@ -242,12 +242,12 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 
 			++convertedCount;
 
-			/*
+			*//*
 			 * ObjectOutputStream* newData = Serializable::convertToHashCodeNameMembers(&data);
 
 			objectDatabase->putData(key, newData, NULL, transaction);
 			 *
-			 */
+			 *//*
 
 			try {
 				newData = Serializable::convertToHashCodeNameMembers(&data);
@@ -266,6 +266,9 @@ void DatabaseManager::convertDatabasesToHashCodeMembers() {
 		}
 
 		printf("converted %llu\n", convertedCount);
+		*/
+		
+		compressDatabase(name, transaction);
 	}
 
 	setManagedObjectsWithHashCodeMembersFlag(transaction);
@@ -665,7 +668,7 @@ int DatabaseManager::compressDatabase(const String& name, engine::db::berkley::T
 		return 2;
 	}
 
-	database->compressDatabaseEntries(transaction);
+	//database->compressDatabaseEntries(transaction);
 
 	uint64 fullKey = 0;
 

@@ -51,8 +51,8 @@ configure-release64:
 	cd build/unix && ../../configure --with-cross-host amd64-linux
 
 configure-debug:
-	cd build/unix && ../../configure --enable-debug
-
+	cd build/unix && ../../configure --enable-debug LD_LIBRARY_PATH=/home/theanswer/gcc-4.7/output/lib CC=/home/theanswer/gcc-4.7/output/bin/gcc CXX=/home/theanswer/gcc-4.7/output/bin/g++ AR=/home/theanswer/gcc-4.7/output/bin/gcc-ar RANLIB=/home/theanswer/gcc-4.7/output/bin/gcc-ranlib NM=/home/theanswer/gcc-4.7/output/bin/gcc-nm
+	#cd build/unix && ../../configure --enable-debug
 compile: compile-idlc compile-engine install-lib
 
 compile-idlc:
@@ -62,7 +62,7 @@ recompile-idlc:
 	$(IDLC) -rb $(IDL_DIRECTIVES) -sd src $(IDL_SOURCES)
 	
 compile-engine:
-	cd build/unix && make
+	cd build/unix && make LD_LIBRARY_PATH=/home/theanswer/gcc-4.7/output/lib -j20
 
 modules:
 	cd external/multimmap && make -C /usr/src/linux-headers-`uname -r` M=`pwd` modules

@@ -39,7 +39,7 @@ namespace engine {
 		virtual void prepareSend(BasePacket* pack);
 		
 		void prepareSequence(BasePacket* pack);
-		void prepareEncryptionAndCompression(BasePacket* pack);
+                void prepareEncryptionAndCompression(BasePacket* pack);
 
 		virtual bool processRecieve(Packet* pack);
 

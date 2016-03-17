@@ -42,6 +42,8 @@
 
 #include "engine/util/u3d/QuadTreeNode.h"
 
+#include "system/thread/Mutex.h"
+
 namespace engine {
 namespace util {
 namespace u3d {
@@ -174,6 +176,8 @@ protected:
 	Reference<CloseObjectsVector* > closeobjects;
 
 	float radius;
+
+	Mutex parentLock;
 
 public:
 	QuadTreeEntryImplementation(QuadTreeNode* n = NULL);

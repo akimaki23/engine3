@@ -120,6 +120,8 @@ lua_State* LuaFunction::callFunction() {
 			Logger::console.error("Error running function " + getFunctionName() + " " + String(lua_tostring(getLuaState(), -1)));
 			return NULL;
 		}
+
+		assert(!(getNumberOfReturnArgs() > 0 && lua_gettop(getLuaState()) == 0));
 	} catch (LuaPanicException& e) {
 		Logger::console.error("LuaPanicException running function " + getFunctionName() + " " + String(lua_tostring(getLuaState(), -1)));
 

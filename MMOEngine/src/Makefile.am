@@ -2,7 +2,7 @@
 # Distribution of this file for usage outside of Core3 is prohibited.
 
 if DEBUG
-AM_CXXFLAGS =-ggdb -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual
+AM_CXXFLAGS =-Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -O2 -march=native -std=c++11 -flto=20 -B/home/theanswer/gcc-4.7/output/bin -fno-omit-frame-pointer
 else
 AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -DVERSION_PUBLIC
 endif

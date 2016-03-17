@@ -18,7 +18,7 @@ void ReadWriteLock::rlock(bool doLock) {
 	if (!doLock)
 		return;
 
-	lockAcquiring("r");
+	//lockAcquiring("r");
 
 	#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 		int res = pthread_rwlock_rdlock(&rwlock);
@@ -54,14 +54,14 @@ void ReadWriteLock::rlock(bool doLock) {
 
 	readLockCount.increment();
 
-	lockAcquired("r");
+	//lockAcquired("r");
 }
 
 void ReadWriteLock::wlock(bool doLock) {
 	if (!doLock)
 		return;
 
-	lockAcquiring("w");
+//	lockAcquiring("w");
 
 	#if !defined(TRACE_LOCKS) || defined(PLATFORM_CYGWIN)
 		int res = pthread_rwlock_wrlock(&rwlock);
@@ -97,11 +97,15 @@ void ReadWriteLock::wlock(bool doLock) {
 		lockTime->updateToCurrentTime();
 	#endif
 
-	lockAcquired("w");
+//	lockAcquired("w");
+
+	threadLockHolder = Thread::getCurrentThread();
+
+	WMB();
 }
 
 void ReadWriteLock::wlock(Mutex* lock) {
-	lockAcquiring(lock, "w");
+	//lockAcquiring(lock, "w");
 
     while (pthread_rwlock_trywrlock(&rwlock)) {
     	#ifndef TRACE_LOCKS
@@ -123,11 +127,14 @@ void ReadWriteLock::wlock(Mutex* lock) {
 	 	#endif
 	}
 
-	lockAcquired(lock, "w");
+	//lockAcquired(lock, "w");
+	threadLockHolder = Thread::getCurrentThread();
+
+	WMB();
 }
 
 void ReadWriteLock::rlock(Lockable* lock) {
-	lockAcquiring(lock, "r");
+	//lockAcquiring(lock, "r");
 
 	while (pthread_rwlock_tryrdlock(&rwlock)) {
 		lock->unlock();
@@ -139,11 +146,11 @@ void ReadWriteLock::rlock(Lockable* lock) {
 
 	readLockCount.increment();
 
-	lockAcquired(lock, "r");
+	//lockAcquired(lock, "r");
 }
 
 void ReadWriteLock::rlock(ReadWriteLock* lock) {
-	lockAcquiring(lock, "r");
+	//lockAcquiring(lock, "r");
 
 	while (pthread_rwlock_tryrdlock(&rwlock)) {
 		lock->unlock();
@@ -155,7 +162,7 @@ void ReadWriteLock::rlock(ReadWriteLock* lock) {
 
 	readLockCount.increment();
 
-	lockAcquired(lock, "r");
+	//lockAcquired(lock, "r");
 }
 
 void ReadWriteLock::wlock(ReadWriteLock* lock) {
@@ -179,7 +186,7 @@ void ReadWriteLock::wlock(ReadWriteLock* lock) {
 		}
 	#endif
 
-	lockAcquiring(lock, "w");
+	//lockAcquiring(lock, "w");
 
     while (pthread_rwlock_trywrlock(&rwlock)) {
     	#ifndef TRACE_LOCKS
@@ -196,11 +203,14 @@ void ReadWriteLock::wlock(ReadWriteLock* lock) {
        	#endif
 	}
 
-	lockAcquired(lock, "w");
+	//lockAcquired(lock, "w");
+	threadLockHolder = Thread::getCurrentThread();
+
+	WMB();
 }
 
 void ReadWriteLock::lock(Lockable* lockable) {
-	lockAcquiring(lockable, "w");
+	//lockAcquiring(lockable, "w");
 
     while (pthread_rwlock_trywrlock(&rwlock)) {
   		lockable->unlock();
@@ -210,8 +220,14 @@ void ReadWriteLock::lock(Lockable* lockable) {
       	lockable->lock();
 	}
 
-	lockAcquired(lockable, "w");
+	//lockAcquired(lockable, "w");
+
+	threadLockHolder = Thread::getCurrentThread();
+
+	WMB();
 }
+
+
 
 void ReadWriteLock::unlock(bool doLock) {
 	if (!doLock)
@@ -240,9 +256,20 @@ void ReadWriteLock::unlock(bool doLock) {
 		}
 	#endif
 	
-//	assert(threadLockHolder == Thread::getCurrentThread());
+	WMB();
+	
+	if (!threadLockHolder) {
+		System::out  << "null thread lock holder on unlock\n";
+		return;
+	}
 
-	lockReleasing();
+	assert(threadLockHolder == Thread::getCurrentThread());
+
+	//lockReleasing("w");
+
+	threadLockHolder = NULL;//Thread::getCurrentThread();
+
+	WMB();
 
 	int res = pthread_rwlock_unlock(&rwlock);
 	if (res != 0) {
@@ -256,7 +283,7 @@ void ReadWriteLock::unlock(bool doLock) {
 		assert(0 && "unlock failed");
 	}
 
-	lockReleased();
+	//lockReleased("w");
 }
 
 void ReadWriteLock::runlock(bool doLock) {
@@ -284,7 +311,7 @@ void ReadWriteLock::runlock(bool doLock) {
 	threadIDLockHolder = 0;*/
 #endif
 
-	lockReleasing("r");
+	//lockReleasing("r");
 
 	readLockCount.decrement();
 
@@ -301,5 +328,5 @@ void ReadWriteLock::runlock(bool doLock) {
 		assert(0 && "runlock failed");
 	}
 
-	lockReleased();
+	//lockReleased("r");
 }
