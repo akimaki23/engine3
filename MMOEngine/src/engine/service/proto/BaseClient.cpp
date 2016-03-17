@@ -561,7 +561,7 @@ Packet* BaseClient::getBufferedPacket() {
 		BasePacket* packet = receiveBuffer.get(0);
 
 		uint32 packseq = packet->getSequence();
-		if ((packseq & 0xFFFF) != (clientSequence & 0xFFFF))
+		if (packseq != clientSequence)
 			return NULL;
 
 		receiveBuffer.remove(0);
