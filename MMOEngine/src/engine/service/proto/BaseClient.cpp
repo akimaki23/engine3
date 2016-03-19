@@ -869,17 +869,12 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 		}
 
 		int32 realseq = seq;
-		if (realseq < acknowledgedServerSequence) {
-			realseq = (seq & 0xFFFF);
+		if (seq < acknowledgedServerSequence) {
+			realseq = (seq & 0xFFFF) | (serverSequence & 0xFFFF0000);
+		}
 
-			uint16 lastAckedOverflow = (uint16) ((acknowledgedServerSequence & 0xFFFF0000) >> 16);
-			uint16 lastAckedSeqRaw = (uint16) (acknowledgedServerSequence & 0x0000FFFF);
-
-			if (realseq < lastAckedSeqRaw) {
-				realseq = (lastAckedOverflow + 1) << 16 | realseq;
-			} else {
-				realseq = (lastAckedOverflow) << 16 | realseq;
-			}
+		if ((uint31)realseq > serverSequence) {
+			realseq -= 0x10000;
 		}
 
 		#ifdef TRACE_CLIENTS
