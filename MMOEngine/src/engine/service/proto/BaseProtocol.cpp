@@ -41,7 +41,6 @@ void BaseProtocol::prepareEncryptionAndCompression(BasePacket* pack) {
 	if (pack->doEncryption()) {
 		encrypt(pack, true);
 	}
-	
 
 	if (pack->doCRCChecking()) {
 		appendCRC(pack);
@@ -73,12 +72,10 @@ void BaseProtocol::prepareSend(BasePacket* pack) {
 	if (pack->doEncryption()) {
 		encrypt(pack, true);
 	}
-	
 
 	if (pack->doCRCChecking()) {
 		appendCRC(pack);
 	}
-
 }
 
 bool BaseProtocol::processRecieve(Packet* pack) {
