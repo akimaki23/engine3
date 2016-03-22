@@ -190,7 +190,7 @@ Vector<Locker*>* TaskManagerImpl::blockTaskManager() {
 		Locker* locker = new Locker(blockMutex);
 		lockers->add(locker);
 	}
-	
+//#endif
 
 	return lockers;
 }
