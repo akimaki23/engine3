@@ -873,7 +873,7 @@ void BaseClient::acknowledgeServerPackets(uint16 seq) {
 			realseq = (seq & 0xFFFF) | (serverSequence & 0xFFFF0000);
 		}
 
-		if ((uint31)realseq > serverSequence) {
+		if ((uint32)realseq > serverSequence) {
 			realseq -= 0x10000;
 		}
 
