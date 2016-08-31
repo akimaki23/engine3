@@ -60,11 +60,7 @@ void TaskScheduler::prepareTask(Task*) {
 void TaskScheduler::run() {
 	Reference<Task*> task = NULL;
 
-	while ((task = tasks.get()) != NULL) {
-#ifdef VERSION_PUBLIC
-		prepareTask(task); // we do this in a method to *hide* it from the stack trace
-#endif
-
+	while (doRun && ((task = tasks.get()) != NULL)) {
 		blockMutex.lock();
 
 		try {
