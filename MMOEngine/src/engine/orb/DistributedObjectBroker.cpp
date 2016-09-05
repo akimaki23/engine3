@@ -94,11 +94,10 @@ void DistributedObjectBroker::run() {
 
 void DistributedObjectBroker::shutdown() {
 	if (socket != NULL) {
-		socket->close();
+		StreamServiceThread::stop();
 
-		ServiceThread::stop(false);
-
-		info("stopped");
+		delete socket;
+		socket = NULL;
 	}
 }
 
