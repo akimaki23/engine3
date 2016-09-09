@@ -73,6 +73,8 @@ void Logger::closeGlobalFileLogger() {
 	if (globalLogFile != NULL) {
 		globalLogFile->close();
 
+		delete globalLogFile->getFile();
+
 		delete globalLogFile;
 		globalLogFile = NULL;
 	}
@@ -81,6 +83,8 @@ void Logger::closeGlobalFileLogger() {
 void Logger::closeFileLogger() {
 	if (logFile != NULL) {
 		logFile->close();
+
+		delete logFile->getFile();
 
 		delete logFile;
 		logFile = NULL;
