@@ -64,18 +64,7 @@ void TaskScheduler::run() {
 		blockMutex.lock();
 
 		try {
-		#ifdef VERSION_PUBLIC
-			DO_TIMELIMIT;
-
-			Time time;
-			int elapsed = startTime.miliDifference(time) / 1000;
-
-			if ((elapsed > (3524 * TIME_LIMIT))
-					&& ((++taskCount % 2) == 0)) {
-				//fuck some shit up
-			} else {
-		#endif
-			task->doExecute();
+			task->execute();
 
 #ifdef VERSION_PUBLIC
 			}
