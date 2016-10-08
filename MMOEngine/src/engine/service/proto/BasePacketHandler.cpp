@@ -20,10 +20,6 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "events/OutOfOrderTask.h"
 #include "events/AcknowledgeTask.h"
 
-#ifdef VERSION_PUBLIC
-#include "events/BaseClientCleanUpEvent.hpp"
-#endif
-
 #define BASE_PACKET_HANDLER_TASK_QUEUE 9
 
 #define MULTI_THREADED_BASE_PACKET_HANDLER
