@@ -504,7 +504,7 @@ void TaskManagerImpl::flushTasks() {
 }
 
 String TaskManagerImpl::getInfo(bool print) {
-	Locker guard(this);
+	lock();
 
 	StringBuffer msg;
 //	msg << "executing tasks - " << getExecutingTaskSize();
@@ -544,7 +544,7 @@ String TaskManagerImpl::getInfo(bool print) {
 		//lets print top 5
 		for (int i = 0, j = ordered.size() - 1; i < 5 && (j - i) >= 0; ++i) {
 			int index = j - i;
-			msg2 << "\t" << ordered.elementAt(index).getValue() << ":" << ordered.elementAt(index).getKey() << endl;
+			msg2 << ordered.elementAt(index).getValue() << ":" << ordered.elementAt(index).getKey() << endl;
 		}
 	}
 
@@ -598,6 +598,8 @@ String TaskManagerImpl::getInfo(bool print) {
 	if (print)
 		info(msg4);
 #endif
+
+	unlock();
 
 	msg << endl << msg2.toString() << endl << msg3.toString() << endl << msg4.toString();
 	return msg.toString();
