@@ -99,8 +99,6 @@ Reference<DistributedObject*> RemoteObjectBroker::lookUp(uint64 objid) {
 
 	DistributedObjectStub* obj = broker->createObjectStub(lookupMessage.getClassName(), name);
 	if (obj != NULL) {
-		obj->_setObjectID(objid);
-
 		broker->deployRemote(name, obj);
 
 		obj->_setObjectBroker(this);
