@@ -39,8 +39,6 @@ InvokeMethodMessage::~InvokeMethodMessage() {
 void InvokeMethodMessage::runMethod() {
 	DistributedObjectBroker* orb = DistributedObjectBroker::instance();
 
-	//printf("trying to get adapter in invoke method fod oid:%d", (int) objectID);
-
 	DistributedObjectAdapter* adapter = orb->getObjectAdapter(objectID);
 	if (adapter == NULL) {
 		orb->error("object not found for method invocation");
@@ -51,6 +49,7 @@ void InvokeMethodMessage::runMethod() {
 	adapter->invokeMethod(methodID, &invocation);
 
 	if (!async) {
+		//printf("not async sending reply\n");
 		DOBMessage* response = (DOBMessage*) invocation.getResponseMessage();
 		client->sendReply(response);
 	}

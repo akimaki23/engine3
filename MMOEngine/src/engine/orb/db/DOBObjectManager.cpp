@@ -77,8 +77,6 @@ DistributedObjectAdapter* DOBObjectManager::addObject(DistributedObjectStub* obj
 	DistributedObjectClassHelper* helper = servant->_getClassHelper();
 	DistributedObjectAdapter* adapter = helper->createAdapter(object);
 
-	//printf( "registering adapter for oid %d", (int)object->_getObjectID());
-
 	return localObjectDirectory.add(object->_getObjectID(), adapter);
 }
 
@@ -123,8 +121,6 @@ void DOBObjectManager::createObjectID(const String& name, DistributedObjectStub*
 		objectid = getNextFreeObjectID();
 		object->_setObjectID(objectid);
 	}
-
-	//printf("setting new objectid to :%d\n", (int)object->_getObjectID());
 
 	if (name.isEmpty()) {
 		/*if (object->_getName().isEmpty())*/ {

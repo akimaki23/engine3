@@ -36,11 +36,6 @@ DistributedObjectBroker::~DistributedObjectBroker() {
 		namingDirectoryService = NULL;
 	}
 
-	if (rootObjectBroker != NULL) {
-		delete rootObjectBroker;
-		rootObjectBroker = NULL;
-	}
-
 	/*if (objectManager != NULL) {
 		delete objectManager;
 		objectManager = NULL;
@@ -112,7 +107,7 @@ void DistributedObjectBroker::registerClass(const String& name, DistributedObjec
 
 void DistributedObjectBroker::deploy(DistributedObjectStub* obj) {
 	uint64 objectid = obj->_getObjectID();
-	const String& name = obj->_getName();
+	String name = obj->_getName();
 
 	if (!isRootBroker()) {
 		debug("deploying object \"" + name + "\" remotely");
@@ -149,12 +144,6 @@ Reference<DistributedObject*> DistributedObjectBroker::lookUp(const String& name
 	}
 
 	return object;
-}
-
-void DistributedObjectBroker::requestServant(DistributedObjectStub* obj) {
-	if (!isRootBroker()) {
-		rootObjectBroker->requestServant(obj);
-	}
 }
 
 Reference<DistributedObject*> DistributedObjectBroker::lookUp(uint64 objid) {
@@ -366,8 +355,6 @@ DistributedObjectServant* DistributedObjectBroker::createObjectServant(const Str
 		servant->_setClassHelper(helper);
 
 		stub->_setImplementation(servant);
-
-		objectManager->addObject(stub);
 	} else
 		warning("class \'" + className + "\' is not declared when creating servant");
 
