@@ -17,20 +17,20 @@ DistributedMethod::DistributedMethod(const DistributedObject* obj, uint32 methid
 
 	orb = NULL;
 
-	invocationMessage = new InvokeMethodMessage(object->_getObjectID(), methid, 0, async);
+	invocationMessgage = new InvokeMethodMessage(object->_getObjectID(), methid, 0, async);
 	response = NULL;
 }
 
 DistributedMethod::DistributedMethod(DistributedObjectBroker* broker, InvokeMethodMessage* invmsg) {
 	orb = broker;
 
-	invocationMessage = invmsg;
+	invocationMessgage = invmsg;
 	response = invmsg;
 }
 
 DistributedMethod::~DistributedMethod() {
-	if (invocationMessage != NULL)
-		delete invocationMessage;
+	if (invocationMessgage != NULL)
+		delete invocationMessgage;
 
 	/*if (response != NULL)
 		delete response;*/
@@ -141,135 +141,135 @@ void DistributedMethod::execute(bool asyncMethod) {
 	broker->invokeMethod(*this, asyncMethod);
 
 	if (!asyncMethod) {
-		response = invocationMessage->getResponseMessage();
+		response = invocationMessgage->getResponseMessage();
 	}
 }
 
 void DistributedMethod::addBooleanParameter(bool val) {
-	invocationMessage->insertBoolean(val);
+	invocationMessgage->insertBoolean(val);
 }
 
 void DistributedMethod::addByteParameter(byte val) {
-	invocationMessage->insertByte(val);
+	invocationMessgage->insertByte(val);
 }
 
 void DistributedMethod::addSignedCharParameter(char val) {
-	invocationMessage->insertSignedByte(val);
+	invocationMessgage->insertSignedByte(val);
 }
 
 void DistributedMethod::addUnsignedCharParameter(unsigned char val) {
-	invocationMessage->insertByte(val);
+	invocationMessgage->insertByte(val);
 }
 
 void DistributedMethod::addSignedIntParameter(int val) {
-	invocationMessage->insertSignedInt(val);
+	invocationMessgage->insertSignedInt(val);
 }
 
 void DistributedMethod::addUnsignedIntParameter(unsigned int val) {
-	invocationMessage->insertInt(val);
+	invocationMessgage->insertInt(val);
 }
 
 void DistributedMethod::addSignedLongParameter(long long val) {
-	invocationMessage->insertSignedLong(val);
+	invocationMessgage->insertSignedLong(val);
 }
 
 void DistributedMethod::addUnsignedLongParameter(unsigned long long val) {
-	invocationMessage->insertLong(val);
+	invocationMessgage->insertLong(val);
 }
 
 void DistributedMethod::addSignedShortParameter(short val) {
-	invocationMessage->insertSignedShort(val);
+	invocationMessgage->insertSignedShort(val);
 }
 
 void DistributedMethod::addUnsignedShortParameter(unsigned short val) {
-	invocationMessage->insertShort(val);
+	invocationMessgage->insertShort(val);
 }
 
 void DistributedMethod::addFloatParameter(float val) {
-	invocationMessage->insertFloat(val);
+	invocationMessgage->insertFloat(val);
 }
 
 void DistributedMethod::addDoubleParameter(double val) {
-	invocationMessage->insertDouble(val);
+	invocationMessgage->insertDouble(val);
 }
 
 void DistributedMethod::addAsciiParameter(const String& ascii) {
-	invocationMessage->insertAscii(ascii);
+	invocationMessgage->insertAscii(ascii);
 }
 
 void DistributedMethod::addUnicodeParameter(const UnicodeString& str) {
-	invocationMessage->insertUnicode(str);
+	invocationMessgage->insertUnicode(str);
 }
 
 void DistributedMethod::addObjectParameter(DistributedObject* obj) {
 	if (obj != NULL)
-		invocationMessage->insertLong(obj->_getObjectID());
+		invocationMessgage->insertLong(obj->_getObjectID());
 	else
-		invocationMessage->insertLong(0);
+		invocationMessgage->insertLong(0);
 }
 
 bool DistributedMethod::getBooleanParameter() {
-	return invocationMessage->getBooleanParameter();
+	return invocationMessgage->getBooleanParameter();
 }
 
 byte DistributedMethod::getByteParameter() {
-	return invocationMessage->getByteParameter();
+	return invocationMessgage->getByteParameter();
 }
 
 char DistributedMethod::getSignedCharParameter() {
-	return invocationMessage->getSignedCharParameter();
+	return invocationMessgage->getSignedCharParameter();
 }
 
 unsigned char DistributedMethod::getUnsignedCharParameter() {
-	return invocationMessage->getUnsignedCharParameter();
+	return invocationMessgage->getUnsignedCharParameter();
 }
 
 int DistributedMethod::getSignedIntParameter() {
-	return invocationMessage->getSignedIntParameter();
+	return invocationMessgage->getSignedIntParameter();
 }
 
 unsigned int DistributedMethod::getUnsignedIntParameter() {
-	return invocationMessage->getUnsignedIntParameter();
+	return invocationMessgage->getUnsignedIntParameter();
 }
 
 long long DistributedMethod::getSignedLongParameter() {
-	return invocationMessage->getSignedLongParameter();
+	return invocationMessgage->getSignedLongParameter();
 }
 
 unsigned long long DistributedMethod::getUnsignedLongParameter() {
-	return invocationMessage->getUnsignedLongParameter();
+	return invocationMessgage->getUnsignedLongParameter();
 }
 
 short DistributedMethod::getSignedShortParameter() {
-	return invocationMessage->getSignedShortParameter();
+	return invocationMessgage->getSignedShortParameter();
 }
 
 unsigned short DistributedMethod::getUnsignedShortParameter() {
-	return invocationMessage->getUnsignedShortParameter();
+	return invocationMessgage->getUnsignedShortParameter();
 }
 
 float DistributedMethod::getFloatParameter() {
-	return invocationMessage->getFloatParameter();
+	return invocationMessgage->getFloatParameter();
 }
 
 double DistributedMethod::getDoubleParameter() {
-	return invocationMessage->getDoubleParameter();
+	return invocationMessgage->getDoubleParameter();
 }
 
 String& DistributedMethod::getAsciiParameter(String& ascii) {
-	invocationMessage->getAsciiParameter(ascii);
+	invocationMessgage->getAsciiParameter(ascii);
 
 	return ascii;
 }
 
 UnicodeString& DistributedMethod::getUnicodeParameter(UnicodeString& str) {
-	invocationMessage->getUnicodeParameter(str);
+	invocationMessgage->getUnicodeParameter(str);
 
 	return str;
 }
 
 DistributedObject* DistributedMethod::getObjectParameter() {
-	uint64 objid = invocationMessage->parseLong();
+	uint64 objid = invocationMessgage->parseLong();
 
 	if (objid != 0)
 		return orb->lookUp(objid);
