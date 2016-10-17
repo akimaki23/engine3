@@ -105,9 +105,25 @@ void ObjectBrokerDirector::brokerDisconnected(ObjectBroker* broker) {
 
 	info("broker disconnected", true);
 
-	objectBrokerTable.remove(broker);
-}
+	RemoteObjectBroker* remote = dynamic_cast<RemoteObjectBroker*>(broker);
 
+	if (remote) { // this assumes no other deploy messaage will arrive while this is running
+		SynchronizedSortedVector<DistributedObject*>& deployedObjects = remote->getDeployedObjects();
+
+		for (int i = 0; i < deployedObjects.size(); ++i) {
+			DistributedObject* obj = deployedObjects.get(i);
+
+			if (obj->_getObjectBroker() == remote)
+				obj->_setObjectBroker(NULL);
+		}
+
+		deployedObjects.removeAll();
+	}
+
+	objectBrokerTable.remove(broker);
+
+	agentStates.drop(broker);
+}
 
 const char* ObjectBrokerDirector::commandToString(int command) {
 	switch (command) {
