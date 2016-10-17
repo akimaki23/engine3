@@ -189,7 +189,7 @@ void Logger::fatal(const StringBuffer& msg) const {
 
 void Logger::debug(const char* msg) const {
 	if (logLevel >= DEBUG) {
-		printTime(true);
+		printTime(false);
 
 		System::out << " [" << name << "] DEBUG - " << msg << "\n";
 	}
