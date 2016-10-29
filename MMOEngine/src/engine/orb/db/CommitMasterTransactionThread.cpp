@@ -31,7 +31,6 @@ CommitMasterTransactionThread::~CommitMasterTransactionThread() {
 }
 
 void CommitMasterTransactionThread::startWatch(engine::db::berkley::Transaction* trans, Vector<UpdateModifiedObjectsThread*>* workers, int number, Vector<DistributedObject* >* objectsToCollect) {
-	assert(trans != NULL);
 	assert(workers != NULL);
 	assert(objectsToCollect != NULL);
 
@@ -78,27 +77,29 @@ void CommitMasterTransactionThread::shutdown() {
 }
 
 int CommitMasterTransactionThread::garbageCollect(DOBObjectManager* objectManager) {
-int i = 0;
+	int i = 0;
 
-//      while (objectsToDeleteFromRam->size() != 0) {
-        for (int j = 0; j < objectsToDeleteFromRam->size(); ++j) {
-        	DistributedObject* object = objectsToDeleteFromRam->get(j);
-                       
-                Locker locker(objectManager);
-                                        
-                //printf("object ref count:%d and updated flag:%d\n", object->getReferenceCount(), object->_isUpdated());
-                                                        
-                if (object->getReferenceCount() == 2 && (!object->_isUpdated() || object->_isDeletedFromDatabase() || !object->isPersistent())) {
-                	objectManager->localObjectDirectory.removeHelper(object->_getObjectID());
-                                                                                                                        //localObjectDirectory.removeHelper(object->_getObjectID());
-                                                                                                                 
-                         ++i;
-                         
-                         object = NULL;
-		} else if (object->_isUpdated() && !object->_isDeletedFromDatabase()) {
-                        //printf("%s refs:%d\n", TypeInfo<DistributedObject>::getClassName(object).toCharArray(), object->getReferenceCount());		
-		}
-		
+	//      while (objectsToDeleteFromRam->size() != 0) {
+	for (int j = 0; j < objectsToDeleteFromRam->size(); ++j) {
+		DistributedObject* object = objectsToDeleteFromRam->get(j);
+
+		Locker locker(objectManager);
+
+		//printf("object ref count:%d and updated flag:%d\n", object->getReferenceCount(), object->_isUpdated());
+
+		if (object->getReferenceCount() == 2 && (!object->_isUpdated() || object->_isDeletedFromDatabase() || !object->isPersistent())) {
+			objectManager->localObjectDirectory.removeHelper(object->_getObjectID());
+			//localObjectDirectory.removeHelper(object->_getObjectID());
+
+			++i;
+
+			object = NULL;
+		} /*else if (object->_isUpdated() && !object->_isDeletedFromDatabase()) {
+			String text = TypeInfo<DistributedObject>::getClassName(object) + " 0x" + String::hexvalueOf((int64)object->_getObjectID());
+
+			printf("%s refs:%d\n", text.toCharArray(), object->getReferenceCount());
+		}*/
+
 		if ((((j + 1) % 10000) == 0) || ((i + 1) % 100) == 0) {
 			locker.release();
 
@@ -124,10 +125,12 @@ void CommitMasterTransactionThread::commitData() {
 
 	DOBObjectManager* objectManager = DistributedObjectBroker::instance()->getObjectManager();
 
-	ObjectDatabaseManager::instance()->commitTransaction(transaction);
-	ObjectDatabaseManager::instance()->checkpoint();
+	if (DistributedObjectBroker::instance()->isRootBroker()) {
+		ObjectDatabaseManager::instance()->commitTransaction(transaction);
+		ObjectDatabaseManager::instance()->checkpoint();
 
-	objectManager->onCommitData();
+		objectManager->onCommitData();
+	}
 
 	objectManager->info("master transaction commited", true);
 
