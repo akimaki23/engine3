@@ -437,14 +437,14 @@ void BaseClient::sendReliablePackets() {
 				StringBuffer msg;
 				msg << "LOSING (" << pack->getSequence() << ") " /*<< pack->toString()*/;
 				debug(msg);
-			}
 
-			if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
-				reentrantTask->scheduleInIoScheduler(10);
-			}
-				}
 			}
 		}
+
+		if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || !sendUnreliableBuffer.isEmpty() || bufferedPacket != NULL)) {
+			reentrantTask->scheduleInIoScheduler(10);
+		}
+
 	} catch (SocketException& e) {
 		disconnect("on activate() - " + e.getMessage(), false);
 	} catch (Exception& e) {
@@ -464,7 +464,7 @@ void BaseClient::sendUnreliablePackets() {
 				BasePacket* pack = getNextUnreliablePacket();
 
 				if (pack == NULL) {
-					if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
+					if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || !sendUnreliableBuffer.isEmpty() || bufferedPacket != NULL)) {
 						try {
 							reentrantTask->scheduleInIoScheduler(10);
 						} catch (Exception& e) {
@@ -490,11 +490,11 @@ void BaseClient::sendUnreliablePackets() {
 				}
 
 				delete pack;
-
-				if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
-					reentrantTask->scheduleInIoScheduler(10);
-				}
 			}
+		}
+
+		if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || !sendUnreliableBuffer.isEmpty() || bufferedPacket != NULL)) {
+			reentrantTask->scheduleInIoScheduler(10);
 		}
 	} catch (SocketException& e) {
 		error("on activate() - " + e.getMessage());
