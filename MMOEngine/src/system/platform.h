@@ -6,6 +6,12 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef PLATFORM_H_
 #define PLATFORM_H_
 
+//#define LOCKFREE_BCLIENT_BUFFERS
+
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+#include <boost/lockfree/queue.hpp>
+#endif
+
 #if defined(_WIN32) || defined(_WIN32_WCE) || defined(__WIN32__)
 	#define PLATFORM_WIN
 #elif defined __CYGWIN__
@@ -102,11 +108,11 @@ extern "C" int isinf (double);
 #endif
 
 //#define WMB() __asm__ __volatile__ ("" ::: "memory");
-//#if GCC_VERSION >= 40100
+#if GCC_VERSION >= 40100
 #define WMB() __sync_synchronize()
-//#else
-//#define WMB()
-//#endif
+#else
+#define WMB()
+#endif
 
 #ifdef __clang__
 #define CLANG_COMPILER

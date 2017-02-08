@@ -57,6 +57,11 @@ BaseClient::BaseClient() : DatagramServiceClient(),
    	
    	
 
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	sendUnreliableBuffer = new packet_buffer_t();
+	sendReliableBuffer = new packet_buffer_t();
+#endif
+
    	//reentrantTask->schedulePeriodic(10, 10);
 }
 
@@ -75,6 +80,11 @@ BaseClient::BaseClient(const String& addr, int port) : DatagramServiceClient(add
 
 	setInfoLogLevel();
    	setGlobalLogging(true);
+
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	sendUnreliableBuffer = new packet_buffer_t();
+	sendReliableBuffer = new packet_buffer_t();
+#endif
 
    	//reentrantTask->schedulePeriodic(10, 10);
 }
@@ -101,6 +111,11 @@ BaseClient::BaseClient(Socket* sock, SocketAddress& addr) : DatagramServiceClien
 	setInfoLogLevel();
    	setGlobalLogging(true);
 
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	sendUnreliableBuffer = new packet_buffer_t();
+	sendReliableBuffer = new packet_buffer_t();
+#endif
+
    	//reentrantTask->schedulePeriodic(10, 10);
 }
 
@@ -122,6 +137,17 @@ BaseClient::~BaseClient() {
 
 		netRequestEvent = NULL;
 	}
+
+	if (!keepSocket)
+		ServiceClient::close();
+
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	delete sendUnreliableBuffer;
+	sendUnreliableBuffer = NULL;
+
+	delete sendReliableBuffer;
+	sendReliableBuffer = NULL;
+#endif
 
 	debug("deleted");
 }
@@ -157,6 +183,10 @@ void BaseClient::initialize() {
    	//netcheckupEvent->schedule(NETSTATUSCHECKUP_TIMEOUT);
 
    	netRequestEvent = new BaseClientNetStatusRequestEvent(this);
+
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	reentrantTask->scheduleInIoScheduler(10);
+#endif
 }
 
 void BaseClient::close() {
@@ -190,11 +220,27 @@ void BaseClient::close() {
 
 	sequenceBuffer.removeAll();
 
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	while (!sendUnreliableBuffer->empty()) {
+		BasePacket* pack;
+
+		if (sendUnreliableBuffer->pop(pack))
+			delete pack;
+	}
+
+	while (!sendReliableBuffer->empty()) {
+		BasePacket* pack;
+
+		if (sendReliableBuffer->pop(pack))
+			delete pack;
+	}
+#else
 	for (int i = 0; i < sendUnreliableBuffer.size(); ++i) {
 		delete sendUnreliableBuffer.get(i);
 	}
 
 	sendUnreliableBuffer.removeAll();
+#endif
 
 	if (fragmentedPacket != NULL) {
 		delete fragmentedPacket;
@@ -241,6 +287,18 @@ void BaseClient::send(Packet* pack, bool doLock) {
 void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 #ifdef WITH_STM
 	TransactionalMemoryManager::instance()->getBaseClientManager()->sendPacket(pack, this);
+
+	return;
+#endif
+
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	if (!pack->doSequencing()) {
+		sendSequenceLess(pack);
+	} else {
+		if (!sendReliableBuffer->push(pack)) {
+			error("losing message in BaseClient::sendPacket due to push");
+		}
+	}
 
 	return;
 #endif
@@ -299,9 +357,10 @@ void BaseClient::bufferMultiPacket(BasePacket* pack) {
 		else
 			sendSequenced(pack);
 
+#ifndef LOCKFREE_BCLIENT_BUFFERS
 		if (!reentrantTask->isScheduled())
 			reentrantTask->scheduleInIoScheduler(10);
-
+#endif
 	}
 }
 
@@ -311,10 +370,16 @@ void BaseClient::sendSequenceLess(BasePacket* pack) {
 			debug("SEND(NOSEQ) - " + pack->toString());
 		#endif
 
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+		if (!sendUnreliableBuffer->push(pack)) {
+			warning("losing unreliable pack - push failed");
+		}
+#else
 		sendUnreliableBuffer.add(pack);
 
 		if (!reentrantTask->isScheduled())
 			reentrantTask->scheduleInIoScheduler(10);
+#endif
 	} catch (SocketException& e) {
 		delete pack;
 
@@ -330,9 +395,10 @@ void BaseClient::sendSequenced(BasePacket* pack) {
 		pack->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
 		sendBuffer.add(pack);
 
+#ifndef LOCKFREE_BCLIENT_BUFFERS
 		if (!reentrantTask->isScheduled())
 			reentrantTask->scheduleInIoScheduler(10);
-
+#endif
 	} catch (SocketException& e) {
 		disconnect("sending packet", false);
 	} catch (ArrayIndexOutOfBoundsException& e) {
@@ -371,6 +437,7 @@ void BaseClient::sendReliablePackets() {
 				BasePacket* pack = getNextSequencedPacket();
 
 				if (pack == NULL) {
+#ifndef LOCKFREE_BCLIENT_BUFFERS
 					if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || bufferedPacket != NULL)) {
 						try {
 							reentrantTask->scheduleInIoScheduler(10);
@@ -378,6 +445,7 @@ void BaseClient::sendReliablePackets() {
 
 						}
 					}
+#endif
 
 					return;
 				}
@@ -440,10 +508,11 @@ void BaseClient::sendReliablePackets() {
 
 			}
 		}
-
+#ifndef LOCKFREE_BCLIENT_BUFFERS
 		if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || !sendUnreliableBuffer.isEmpty() || bufferedPacket != NULL)) {
 			reentrantTask->scheduleInIoScheduler(10);
 		}
+#endif
 
 	} catch (SocketException& e) {
 		disconnect("on activate() - " + e.getMessage(), false);
@@ -464,6 +533,7 @@ void BaseClient::sendUnreliablePackets() {
 				BasePacket* pack = getNextUnreliablePacket();
 
 				if (pack == NULL) {
+#ifndef LOCKFREE_BCLIENT_BUFFERS
 					if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || !sendUnreliableBuffer.isEmpty() || bufferedPacket != NULL)) {
 						try {
 							reentrantTask->scheduleInIoScheduler(10);
@@ -471,7 +541,7 @@ void BaseClient::sendUnreliablePackets() {
 
 						}
 					}
-
+#endif
 					return;
 				}
 
@@ -492,10 +562,11 @@ void BaseClient::sendUnreliablePackets() {
 				delete pack;
 			}
 		}
-
+#ifndef LOCKFREE_BCLIENT_BUFFERS
 		if (!reentrantTask->isScheduled() && (!sendBuffer.isEmpty() || !sendUnreliableBuffer.isEmpty() || bufferedPacket != NULL)) {
 			reentrantTask->scheduleInIoScheduler(10);
 		}
+#endif
 	} catch (SocketException& e) {
 		error("on activate() - " + e.getMessage());
 	} catch (Exception& e) {
@@ -512,14 +583,61 @@ void BaseClient::run() {
 
 	lock();
 
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	int i = 0;
+	BasePacket* pack;
+
+	while (i < 20 && sendReliableBuffer->pop(pack)) {
+		try {
+			if (pack->size() >= 490) {
+				if (bufferedPacket != NULL) {
+					sendSequenced(bufferedPacket->getPacket());
+					bufferedPacket = NULL;
+				}
+
+				sendFragmented(pack);
+			} else
+				bufferMultiPacket(pack);
+		} catch (...) {
+			disconnect("unreported exception on lockfree sendPacket()", false);
+		}
+
+		++i;
+	}
+
+	if (i >= 20) {
+		warning("more than 20 packets in sendReliableBuffer on BaseClient tick");
+	}
+#endif
+
 	sendReliablePackets();
 
 	sendUnreliablePackets();
+
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	try {
+		auto ref = reentrantTask;
+
+		if (ref != NULL)
+			ref->scheduleInIoScheduler(10);
+	} catch (...) {
+
+	}
+#endif
 
 	unlock();
 }
 
 BasePacket* BaseClient::getNextUnreliablePacket() {
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	BasePacket* pack;
+
+	if (sendUnreliableBuffer->pop(pack)) {
+		return pack;
+	} else {
+		return NULL;
+	}
+#else
 	if (!sendUnreliableBuffer.isEmpty()) {
 		BasePacket* pack = sendUnreliableBuffer.remove(0);
 
@@ -527,6 +645,7 @@ BasePacket* BaseClient::getNextUnreliablePacket() {
 	}
 
 	return NULL;
+#endif
 }
 
 BasePacket* BaseClient::getNextSequencedPacket() {
@@ -540,19 +659,16 @@ BasePacket* BaseClient::getNextSequencedPacket() {
 	#endif*/
 
 	if (serverSequence - acknowledgedServerSequence > 50) { //originally 25
+#ifndef LOCKFREE_BCLIENT_BUFFERS
 		if ((!sendBuffer.isEmpty() || bufferedPacket != NULL) && !reentrantTask->isScheduled())
 			reentrantTask->scheduleInIoScheduler(10);
-			
-                try {
-                        if (!checkupEvent->isScheduled()) {
-                                checkupEvent->scheduleInIoScheduler(5);
-                        }
-                } catch (...) {
-                }
-
-        
-        
-//                resendPackets();
+#endif
+		try {
+			if (!checkupEvent->isScheduled()) {
+				checkupEvent->scheduleInIoScheduler(5);
+			}
+		} catch (...) {
+		}
 
         
                 
