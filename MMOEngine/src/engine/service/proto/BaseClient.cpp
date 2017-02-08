@@ -190,6 +190,8 @@ void BaseClient::initialize() {
 }
 
 void BaseClient::close() {
+	disconnected = true;
+
 	reentrantTask->cancel();
 
 	checkupEvent->cancel();
@@ -252,8 +254,6 @@ void BaseClient::close() {
 
 	acknowledgedServerSequence = -1;
 
-	disconnected = true;
-
 	reportStats();
 
 	closeFileLogger();
@@ -292,6 +292,9 @@ void BaseClient::sendPacket(BasePacket* pack, bool doLock) {
 #endif
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
+	if (!isAvailable())
+		return;
+
 	if (!pack->doSequencing()) {
 		sendSequenceLess(pack);
 	} else {
@@ -615,13 +618,15 @@ void BaseClient::run() {
 	sendUnreliablePackets();
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	try {
-		auto ref = reentrantTask;
+	if (isAvailable()) {
+		try {
+			auto ref = reentrantTask;
 
-		if (ref != NULL)
-			ref->scheduleInIoScheduler(10);
-	} catch (...) {
+			if (ref != NULL)
+				ref->scheduleInIoScheduler(10);
+		} catch (...) {
 
+		}
 	}
 #endif
 
