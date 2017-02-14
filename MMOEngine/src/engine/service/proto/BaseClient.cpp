@@ -504,12 +504,11 @@ int BaseClient::sendReliablePackets(int count) {
 					return sentPackets;
 				}
 
-				return;
-			}
+				pack->acquire();
 
-			if (sequenceBuffer.isEmpty()) {
-				((BasePacketChekupEvent*)(checkupEvent.get()))->update(pack);
-				pack->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
+				if (sequenceBuffer.isEmpty()) {
+					((BasePacketChekupEvent*)(checkupEvent.get()))->update(pack);
+					pack->setTimeout(((BasePacketChekupEvent*)(checkupEvent.get()))->getCheckupTime());
 
 				if (!checkupEvent->isScheduled())
 					checkupEvent->scheduleInIoScheduler(pack->getTimeout());
@@ -556,7 +555,6 @@ int BaseClient::sendReliablePackets(int count) {
 
 				++sentPackets;
 
-				pack->acquire();
 				sequenceBuffer.add(pack);
 			}
 		}
