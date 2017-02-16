@@ -66,12 +66,13 @@ namespace sys {
 		}
 
 		virtual int compareTo(const Reference& val) const {
-			if (object < val.object)
+			if (std::less<Object*>()(object, val.object)) {
 				return 1;
-			else if (object > val.object)
-				return -1;
-			else
+			} else if (object == val.object) {
 				return 0;
+			} else {
+				return -1;
+			}
 		}
 
 		Reference& operator=(const Reference& ref) {
@@ -231,7 +232,7 @@ namespace sys {
 					return;
 				}
 
-				Thread::yield();
+				//Thread::yield();
 			}
 
 		}
