@@ -6,7 +6,9 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #ifndef PLATFORM_H_
 #define PLATFORM_H_
 
-//#define LOCKFREE_BCLIENT_BUFFERS
+#ifndef VERSION_PUBLIC
+#define LOCKFREE_BCLIENT_BUFFERS
+#endif
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
 #include <boost/lockfree/queue.hpp>
@@ -123,7 +125,6 @@ extern "C" int isinf (double);
 #include <utility>
 #endif
 
-
 namespace sys {
 	typedef unsigned long long uint64;
 	typedef unsigned int uint32;
@@ -152,7 +153,9 @@ namespace sys {
 
 	#define MAX_FLOAT FLT_MAX
 	#define SMALL_NUM  FLT_EPSILON
-	
+
+	//#define VECTORS_OUT_OF_BOUNDS_CHECK
+
 	#ifdef DEFAULT_DYNAMIC_CAST
 	#define cast dynamic_cast
 	#else
@@ -167,11 +170,6 @@ namespace sys {
 	//#define TRACE_REFERENCES
 
 	//#define TRACE_TASKS
-
-	#ifdef VERSION_PUBLIC
-	#define CONNECTION_LIMIT 2000000000
-	#define TIME_LIMIT 24
-	#endif
 
 	//#define WITH_STM
 	//#define MEMORY_PROTECTION
