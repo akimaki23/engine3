@@ -106,8 +106,9 @@ void ReadWriteLock::wlock(Mutex* lock) {
 
     		lock->unlock();
 
+#ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
 			Thread::yield();
-
+#endif
       		//pthread_mutex_lock(&(lock->mutex));
 
 			lock->lock();
@@ -132,7 +133,9 @@ void ReadWriteLock::rlock(Lockable* lock) {
 	while (pthread_rwlock_tryrdlock(&rwlock)) {
 		lock->unlock();
 
+#ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
 		Thread::yield();
+#endif
 
 		lock->lock();
 	}
@@ -148,7 +151,9 @@ void ReadWriteLock::rlock(ReadWriteLock* lock) {
 	while (pthread_rwlock_tryrdlock(&rwlock)) {
 		lock->unlock();
 
+#ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
 		Thread::yield();
+#endif
 
 		lock->lock();
 	}
@@ -186,8 +191,9 @@ void ReadWriteLock::wlock(ReadWriteLock* lock) {
   			//pthread_rwlock_unlock(&(lock->rwlock));
     		lock->unlock();
 
+#ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
   			Thread::yield();
-
+#endif
        		//pthread_rwlock_wrlock(&(lock->rwlock));
   			lock->wlock();
        	#else
@@ -208,8 +214,9 @@ void ReadWriteLock::lock(Lockable* lockable) {
     while (pthread_rwlock_trywrlock(&rwlock)) {
   		lockable->unlock();
 
+#ifdef ENABLE_YIELD_BETWEEN_CROSSLOCK
   		Thread::yield();
-
+#endif
       	lockable->lock();
 	}
 
