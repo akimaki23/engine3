@@ -109,11 +109,11 @@ namespace sys {
 			return object.get();
 		}
 
-		bool operator==(O obj) {
+		bool operator==(O obj) const {
 			return object.get() == obj;
 		}
 
-		bool operator!=(O obj) {
+		bool operator!=(O obj) const {
 			return object.get() != obj;
 		}
 

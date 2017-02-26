@@ -431,7 +431,7 @@ int DOBObjectManager::deployUpdateThreads(Vector<DistributedObject*>* objectsToU
 	}
 
 	for (int i = 0; i < numberOfThreads; ++i) {
-		UpdateModifiedObjectsThread* thread = updateModifiedObjectsThreads.get(i);
+		UpdateModifiedObjectsThread* thread = updateModifiedObjectsThreads.getUnsafe(i);
 
 		thread->waitFinishedWork();
 
@@ -453,7 +453,7 @@ int DOBObjectManager::deployUpdateThreads(Vector<DistributedObject*>* objectsToU
 	}
 
 	for (int i = 0; i < numberOfThreads; ++i) {
-		UpdateModifiedObjectsThread* thread = updateModifiedObjectsThreads.get(i);
+		UpdateModifiedObjectsThread* thread = updateModifiedObjectsThreads.getUnsafe(i);
 
 		thread->waitFinishedWork();
 	}

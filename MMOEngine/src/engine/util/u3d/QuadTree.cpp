@@ -618,7 +618,7 @@ void QuadTree::safeInRange(QuadTreeEntry* obj, float range) {
 
 	try {
 		for (int i = 0; i < closeObjectsCopy.size(); ++i) {
-			QuadTreeEntry* o = closeObjectsCopy.get(i);
+			QuadTreeEntry* o = closeObjectsCopy.getUnsafe(i);
 			ManagedReference<QuadTreeEntry*> objectToRemove = o;
 			ManagedReference<QuadTreeEntry*> rootParent = o->getRootParent();
 
@@ -663,7 +663,7 @@ void QuadTree::safeInRange(QuadTreeEntry* obj, float range) {
 	locker.release();
 
 	for (int i = 0; i < inRangeObjects.size(); ++i) {
-		QuadTreeEntry *o = inRangeObjects.get(i);
+		QuadTreeEntry *o = inRangeObjects.getUnsafe(i);
 
 		if (o != obj) {
 			float deltaX = x - o->getPositionX();
@@ -751,7 +751,7 @@ void QuadTree::copyObjects(const Reference<QuadTreeNode*>& node, float x, float 
 	//objects.addAll(node->objects);
 
 	for (int i = 0; i < node->objects.size(); ++i) {
-		objects.add(node->objects.get(i));
+		objects.add(node->objects.getUnsafe(i).get());
 	}
 
 	if (node->hasSubNodes()) {
@@ -947,8 +947,8 @@ int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, flo
 		SortedVector<QuadTreeEntry* >& objects) {
 	int count = 0;
 
-	for (int i = 0; i < node.get()->objects.size(); i++) {
-		QuadTreeEntry *o = node.get()->objects.get(i);
+	for (int i = 0; i < node->objects.size(); i++) {
+		QuadTreeEntry *o = node->objects.getUnsafe(i);
 
 		if (o->isInRange(x, y, range)) {
 			++count;
