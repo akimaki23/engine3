@@ -281,7 +281,7 @@ void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 
 	ReadLocker locker(&mutex);
 
-	SortedVector<ManagedReference<QuadTreeEntry*> >* closeObjects = obj->getCloseObjects();
+	CloseObjectsVector* closeObjects = obj->getCloseObjects();
 
 	float rangesq = range * range;
 
@@ -312,7 +312,7 @@ void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 						if (oldDeltaX * oldDeltaX + oldDeltaY * oldDeltaY <= rangesq) {
 							obj->removeInRangeObject(objectToRemove);
 
-							SortedVector<ManagedReference<QuadTreeEntry* > >* objCloseObjects = objectToRemove->getCloseObjects();
+							CloseObjectsVector* objCloseObjects = objectToRemove->getCloseObjects();
 
 							if (objCloseObjects != NULL)
 								objectToRemove->removeInRangeObject(obj);
@@ -638,7 +638,7 @@ void QuadTree::safeInRange(QuadTreeEntry* obj, float range) {
 					if (oldDeltaX * oldDeltaX + oldDeltaY * oldDeltaY <= rangesq) {
 						obj->removeInRangeObject(objectToRemove);
 
-						SortedVector<ManagedReference<QuadTreeEntry* > >* objCloseObjects = objectToRemove->getCloseObjects();
+						CloseObjectsVector* objCloseObjects = objectToRemove->getCloseObjects();
 
 						if (objCloseObjects != NULL)
 							objectToRemove->removeInRangeObject(obj);
@@ -672,7 +672,7 @@ void QuadTree::safeInRange(QuadTreeEntry* obj, float range) {
 			try {
 
 				if (deltaX * deltaX + deltaY * deltaY <= rangesq) {
-					SortedVector<ManagedReference<QuadTreeEntry* > >* objCloseObjects = obj->getCloseObjects();
+					CloseObjectsVector* objCloseObjects = obj->getCloseObjects();
 
 #ifdef WITH_STM
 					if (objCloseObjects != NULL && !objCloseObjects->contains(o)) {
@@ -684,7 +684,7 @@ void QuadTree::safeInRange(QuadTreeEntry* obj, float range) {
 						obj->addInRangeObject(o, false);
 #endif
 
-					SortedVector<ManagedReference<QuadTreeEntry* > >* oCloseObjects = o->getCloseObjects();
+					CloseObjectsVector* oCloseObjects = o->getCloseObjects();
 
 #ifdef WITH_STM
 					if (oCloseObjects != NULL && !oCloseObjects->contains(obj)) {
@@ -705,12 +705,12 @@ void QuadTree::safeInRange(QuadTreeEntry* obj, float range) {
 
 					if (oldDeltaX * oldDeltaX + oldDeltaY * oldDeltaY <= rangesq) {
 
-						SortedVector<ManagedReference<QuadTreeEntry* > >* objCloseObjects = obj->getCloseObjects();
+						CloseObjectsVector* objCloseObjects = obj->getCloseObjects();
 						if (objCloseObjects != NULL)
 							obj->removeInRangeObject(o);
 
 
-						SortedVector<ManagedReference<QuadTreeEntry* > >* oCloseObjects = o->getCloseObjects();
+						CloseObjectsVector* oCloseObjects = o->getCloseObjects();
 
 						if (oCloseObjects != NULL)
 							o->removeInRangeObject(obj);
@@ -785,13 +785,13 @@ void QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEnt
 			float deltaY = y - o->getPositionY();
 
 			if (deltaX * deltaX + deltaY * deltaY <= rangesq) {
-				SortedVector<ManagedReference<QuadTreeEntry* > >* objCloseObjects = obj->getCloseObjects();
+				CloseObjectsVector* objCloseObjects = obj->getCloseObjects();
 				if (objCloseObjects != NULL && !objCloseObjects->contains(o)) {
 					obj->addInRangeObject(o, false);
 					//obj->notifyInsert(o);
 				}
 
-				SortedVector<ManagedReference<QuadTreeEntry* > >* oCloseObjects = o->getCloseObjects();
+				CloseObjectsVector* oCloseObjects = o->getCloseObjects();
 
 				if (oCloseObjects != NULL && !oCloseObjects->contains(obj)) {
 					o->addInRangeObject(obj);
@@ -807,12 +807,12 @@ void QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEnt
 
 				if (oldDeltaX * oldDeltaX + oldDeltaY * oldDeltaY <= rangesq) {
 
-					SortedVector<ManagedReference<QuadTreeEntry* > >* objCloseObjects = obj->getCloseObjects();
+					CloseObjectsVector* objCloseObjects = obj->getCloseObjects();
 					if (objCloseObjects != NULL)
 						obj->removeInRangeObject(o);
 
 
-					SortedVector<ManagedReference<QuadTreeEntry* > >* oCloseObjects = o->getCloseObjects();
+					CloseObjectsVector* oCloseObjects = o->getCloseObjects();
 
 					if (oCloseObjects != NULL)
 						o->removeInRangeObject(obj);
