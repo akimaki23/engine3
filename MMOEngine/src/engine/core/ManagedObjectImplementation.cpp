@@ -9,7 +9,7 @@ void ManagedObject::lock(bool doLock) {
 	DistributedObjectStub::wlock(doLock);
 
 	if (_getImplementationForRead() == NULL)
-		_wlock(doLock);
+		__wlock(doLock);
 #endif
 }
 
@@ -27,7 +27,7 @@ void ManagedObject::lock(ManagedObject* obj) {
 	DistributedObjectStub::wlock(obj);
 
 	if (_getImplementationForRead() == NULL)
-		_wlock(obj);
+		__wlock(obj);
 #endif
 }
 
@@ -36,7 +36,7 @@ void ManagedObject::rlock(bool doLock) {
 	DistributedObjectStub::rlock(doLock);
 
 	if (_getImplementationForRead() == NULL)
-		_rlock(doLock);
+		__rlock(doLock);
 #endif
 }
 
@@ -45,7 +45,7 @@ void ManagedObject::wlock(bool doLock) {
 	DistributedObjectStub::wlock(doLock);
 
 	if (_getImplementationForRead() == NULL)
-		_wlock(doLock);
+		__wlock(doLock);
 #endif
 }
 
@@ -54,7 +54,7 @@ void ManagedObject::wlock(ManagedObject* obj) {
 	DistributedObjectStub::wlock(obj);
 
 	if (_getImplementationForRead() == NULL)
-		_wlock(obj);
+		__wlock(obj);
 #endif
 }
 
@@ -63,7 +63,7 @@ void ManagedObject::lock(Lockable* obj) {
 	DistributedObjectStub::lock(obj);
 
 	if (_getImplementationForRead() == NULL)
-		_lock(obj);
+		__lock(obj);
 #endif
 }
 
@@ -72,7 +72,7 @@ void ManagedObject::unlock(bool doLock) {
 	DistributedObjectStub::unlock(doLock);
 
 	if (_getImplementationForRead() == NULL)
-		_unlock(doLock);
+		__unlock(doLock);
 #endif
 }
 
@@ -82,7 +82,7 @@ void ManagedObject::rlock(ManagedObject* obj) {
 	DistributedObjectStub::rlock(obj);
 
 	if (_getImplementationForRead() == NULL)
-		_rlock();
+		__rlock();
 #endif
 }
 
@@ -91,7 +91,7 @@ void ManagedObject::rlock(Lockable* obj) {
 	DistributedObjectStub::rlock(obj);
 
 	if (_getImplementationForRead() == NULL)
-		_rlock();
+		__rlock();
 #endif
 }
 
@@ -100,7 +100,7 @@ void ManagedObject::runlock(bool doLock) {
 	DistributedObjectStub::runlock(doLock);
 
 	if (_getImplementationForRead() == NULL)
-		_runlock(doLock);
+		__runlock(doLock);
 #endif
 }
 
@@ -108,7 +108,7 @@ void ManagedObject::setLockName(const String& name) {
 	DistributedObjectStub::setLockName(name);
 
 	if (_getImplementationForRead() == NULL)
-		_setLockName(name);
+		__setLockName(name);
 }
 
 bool ManagedObject::notifyDestroy() {
