@@ -103,28 +103,25 @@ namespace sys {
 			return UnsignedLong::hashCode((uint64)object.get());
 		}
 
-		O operator=(O obj) {
+		inline O operator=(O obj) {
 			updateObject(obj);
 
 			return object.get();
 		}
 
-		bool operator==(O obj) const {
+		inline bool operator==(O obj) const {
 			return object.get() == obj;
 		}
 
-		bool operator!=(O obj) const {
+		inline bool operator!=(O obj) const {
 			return object.get() != obj;
 		}
 
-		O operator->() const {
-			O obj = object.get();
-
-			assert(obj != NULL);
-			return obj;
+		inline O operator->() const {
+			return object.get();
 		}
 
-		operator O() const {
+		inline operator O() const {
 			return object.get();
 		}
 
@@ -155,7 +152,7 @@ namespace sys {
 
 			if (oldval == oldRef) { //success
 				if (newval != NULL) {
-					newval->acquire();
+					(newval)->acquire();
 
 					#ifdef TRACE_REFERENCES
 					newval->addHolder(id);
@@ -167,14 +164,14 @@ namespace sys {
 					oldval->removeHolder(id);
 					#endif
 
-					oldval->release();
+					(oldval)->release();
 				}
 			}
 
 			return oldRef;
 		}
 
-		void initializeWithoutAcquire(O obj) {
+		inline void initializeWithoutAcquire(O obj) {
 			object = obj;
 		}
 
@@ -183,7 +180,7 @@ namespace sys {
 
 			if (success) {
 				if (newval != NULL) {
-					newval->acquire();
+					(newval)->acquire();
 
 					#ifdef TRACE_REFERENCES
 					newval->addHolder(id);
@@ -195,7 +192,7 @@ namespace sys {
 					oldval->removeHolder(id);
 					#endif
 
-					oldval->release();
+					(oldval)->release();
 				}
 			}
 
@@ -206,7 +203,7 @@ namespace sys {
 		//lock free
 		inline void updateObject(O obj) {
 			if (obj != NULL) {
-				obj->acquire();
+				(obj)->acquire();
 
 				#ifdef TRACE_REFERENCES
 				Object* castedObject = dynamic_cast<Object*>(obj);
@@ -226,7 +223,7 @@ namespace sys {
 						castedObject->removeHolder(id);
 						#endif
 
-						oldobj->release();
+						(oldobj)->release();
 					}
 
 					return;
@@ -253,18 +250,18 @@ namespace sys {
 		inline void acquireObject() {
 			if (object != NULL) {
 			#ifdef TRACE_REFERENCES
-				object->addHolder(id);
+				(object.get())->addHolder(id);
 			#endif
-				object->acquire();
+				(object.get())->acquire();
 			}
 		}
 
 		inline void releaseObject() {
 			if (object != NULL) {
 			#ifdef TRACE_REFERENCES
-				object->removeHolder(id);
+				(object.get())->removeHolder(id);
 			#endif
-				object->release();
+				(object.get())->release();
 				object = NULL;
 			}
 		}
