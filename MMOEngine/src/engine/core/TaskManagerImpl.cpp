@@ -537,8 +537,9 @@ void TaskManagerImpl::flushTasks() {
 }
 
 template<class M, class S>
-void orderStatistics(M& ordered, S& tasksCount) {
+uint64 orderStatistics(M& ordered, S& tasksCount) {
 	auto iterator = tasksCount.iterator();
+	uint64 totalRuntime = 0;
 
 	while (iterator.hasNext()) {
 		typename S::key_type* name;
@@ -547,16 +548,25 @@ void orderStatistics(M& ordered, S& tasksCount) {
 		iterator.getNextKeyAndValue(name, count);
 
 		ordered.put(*count, *name);
+		totalRuntime += count->totalRunTime;
 	}
+
+	return totalRuntime;
 };
 
-void orderStatisticsMap(VectorMap<RunStatistics, String>& ordered, const VectorMap<String, RunStatistics>& tasksCount) {
+uint64 orderStatisticsMap(VectorMap<RunStatistics, String>& ordered, const VectorMap<String, RunStatistics>& tasksCount) {
+	uint64 totalRuntime = 0;
+
 	for (const auto& entry : tasksCount) {
 		const auto& count = entry.getValue();
 		const auto& name = entry.getKey();
 
 		ordered.put(count, name);
+
+		totalRuntime += count.totalRunTime;
 	}
+
+	return totalRuntime;
 };
 
 template<class M>
@@ -658,9 +668,9 @@ String TaskManagerImpl::getInfo(bool print) {
 		VectorMap<RunStatistics, const char*> ordered(tasksCount.size(), 2);
 
 		//lets order them
-		orderStatistics(ordered, tasksCount);
+		auto totalRuntimeTasks = orderStatistics(ordered, tasksCount);
 
-		msg4 << "distinct tasks recorded in worker " << i << " - " << tasksCount.size() << endl;
+		msg4 << "total runtime: " << totalRuntimeTasks / 1000000000 << "s distinct tasks recorded in worker " << i << " : " << tasksCount.size() << endl;
 
 		//lets print top 5
 		printStatistics(msg4, ordered, true);
@@ -669,12 +679,23 @@ String TaskManagerImpl::getInfo(bool print) {
 		auto luaTasksCount = worker->getLuaTasksStatistics();
 		VectorMap<RunStatistics, String> luaOrdered(luaTasksCount.size(), 2);
 
-		orderStatisticsMap(luaOrdered, luaTasksCount);
+		auto totalRuntimeLua = orderStatisticsMap(luaOrdered, luaTasksCount);
 
-		msg4 << "distinct lua tasks recorded in worker " << i << " - " << luaTasksCount.size() << endl;
+		msg4 << "lua total runtime: " << totalRuntimeLua / 1000000000 <<  "s distinct lua tasks recorded in worker " << i << " : " << luaTasksCount.size() << endl;
 
 		//lets print top 5
 		printStatistics(msg4, luaOrdered, false);
+
+		//now lets print bdb read latency
+		auto bdbTasksCount = worker->getBDBReadStatistics();
+		VectorMap<RunStatistics, String> bdbOrdered(bdbTasksCount.size(), 2);
+
+		auto totalRuntimeBDB = orderStatisticsMap(bdbOrdered, bdbTasksCount);
+
+		msg4 << "bdb read total runtime: " << totalRuntimeBDB / 1000000000 <<  "s distinct bdb databases in worker " << i << " : " << bdbTasksCount.size() << endl;
+
+		//lets print top 5
+		printStatistics(msg4, bdbOrdered, false);
 
 		msg4 << endl;
 	}
