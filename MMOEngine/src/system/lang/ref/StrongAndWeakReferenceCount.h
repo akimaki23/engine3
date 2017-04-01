@@ -67,6 +67,10 @@ public:
 		return strongReferenceCount.decrementAndTestAndSet();
 	}
 
+	inline bool tryStrongFinalDecrement() volatile {
+		return strongReferenceCount.tryFinalDecrement();
+	}
+
 	inline uint32 decrementAndTestAndSetWeakCount() volatile {
 		return weakReferenceCount.decrementAndTestAndSet();
 	}
