@@ -9,6 +9,8 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "engine/log/Logger.h"
 
+#include "system/lang/Math.h"
+
 SocketAddress::SocketAddress() {
 	clear();
 }
@@ -47,7 +49,10 @@ SocketAddress::SocketAddress(const String& host, int port) {
 		throw SocketException("unknown host " + host + " (error: " + error  + ") ");
 	}
 
-	memmove(&addr, result->ai_addr, result->ai_addrlen);
+	//TODO fix this shit cause IPv6 ai_addrlen is 28 bytes vs sizeof(addr) that is 16
+	uint32 moveSize = (uint32) Math::min((uint64) result->ai_addrlen, (uint64) sizeof(addr));
+
+	memmove(&addr, result->ai_addr, moveSize);
 
 	freeaddrinfo(result);
 #else
