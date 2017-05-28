@@ -47,7 +47,7 @@ namespace u3d {
 class QuadTreeEntry;
 
 class QuadTreeNode: public Object {
-	SortedVector<ManagedReference<engine::util::u3d::QuadTreeEntry*> > objects;
+	SortedVector<Reference<engine::util::u3d::QuadTreeEntry*> > objects;
 
 //#ifdef WITH_STM
 	TransactionalWeakReference<QuadTreeNode*> parentNode;
