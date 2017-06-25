@@ -150,8 +150,8 @@ BaseClient::~BaseClient() {
 	if (!keepSocket)
 		ServiceClient::close();
 
-#ifdef sendLockFreeBuffer
-	delete sendUnreliableBuffer;
+#ifdef LOCKFREE_BCLIENT_BUFFERS
+	delete sendLockFreeBuffer;
 	sendLockFreeBuffer = NULL;
 #endif
 
