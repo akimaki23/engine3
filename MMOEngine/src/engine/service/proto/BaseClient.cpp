@@ -148,7 +148,7 @@ BaseClient::~BaseClient() {
 		ServiceClient::close();
 
 #ifdef LOCKFREE_BCLIENT_BUFFERS
-	delete sendUnreliableBuffer;
+	delete sendLockFreeBuffer;
 	sendLockFreeBuffer = NULL;
 #endif
 
