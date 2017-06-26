@@ -217,7 +217,8 @@ Task* TimedTaskQueue::get() {
 
 	task = (Task*) PriorityQueue::poll();
 
-	assert(task->clearTaskScheduler());
+	bool cleared = task->clearTaskScheduler();
+	assert(cleared);
 
 	if (!blocked && task->getNextExecutionTime().isFuture()) {
 		int64 difference = - task->getNextExecutionTime().miliDifference();
@@ -279,7 +280,9 @@ bool TimedTaskQueue::remove(Task* task, bool doLock) {
 
 	PriorityQueue::remove(task);
 
-	assert(task->clearTaskScheduler());
+	bool cleared = task->clearTaskScheduler();
+
+	assert(cleared);
 
 	task->release();
 
