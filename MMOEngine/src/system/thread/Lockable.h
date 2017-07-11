@@ -101,7 +101,7 @@ namespace sys {
 	protected:
 		//String lockName;
 
-		Thread* threadLockHolder;
+		volatile Thread* threadLockHolder;
 		AtomicInteger readLockCount;
 
 #ifdef TRACE_LOCKS
@@ -126,13 +126,13 @@ namespace sys {
 
 		virtual ~Lockable();
 
-		virtual void lock(bool doLock = true) = 0;
-		virtual void lock(Lockable* lockable) = 0;
+		ACQUIRE() virtual void lock(bool doLock = true) = 0;
+		ACQUIRE() virtual void lock(Lockable* lockable) = 0;
 
-		virtual void unlock(bool doLock = true) = 0;
+		RELEASE() virtual void unlock(bool doLock = true) = 0;
 
 	protected:
-/*		inline void lockAcquiring(const char* modifier = "") {
+		inline void lockAcquiring(const char* modifier = "") {
 		#ifdef LOG_LOCKS
 			int cnt = lockCount.increment();
 
@@ -152,7 +152,6 @@ namespace sys {
 							<< modifier << "lock #" << cnt << "\n";
 		#endif
 		}
-		
 
 		inline void lockAcquired(const char* modifier = "") {
 		#ifdef LOG_LOCKS
@@ -167,11 +166,10 @@ namespace sys {
 			if (modifier[0] != 'r')
 				refreshTrace();
 		#endif
-		        //if (modifier[0] == 'w')
 
-				WMB();
-        			threadLockHolder = Thread::getCurrentThread();
-				
+			COMPILER_BARRIER();
+
+			threadLockHolder = Thread::getCurrentThread();
 		}
 
 		inline void lockAcquired(Lockable* lockable, const char* modifier = "") {
@@ -188,15 +186,16 @@ namespace sys {
 			if (modifier[0] != 'r')
 				refreshTrace();
 		#endif
-		        //if (modifier[0] == 'w')i
-				WMB();
-			        threadLockHolder = Thread::getCurrentThread();
+
+			COMPILER_BARRIER();
+
+			threadLockHolder = Thread::getCurrentThread();
 		}
 
 		inline void lockReleasing(const char* modifier = "") {
-		        WMB();
-		        //if (modifier[0] == 'w')
-			        threadLockHolder = NULL;
+			COMPILER_BARRIER();
+
+			threadLockHolder = NULL;
 
 		#ifdef TRACE_LOCKS
 			if (modifier[0] != 'r') {
@@ -220,7 +219,7 @@ namespace sys {
 							<< "] released " << modifier << "lock #" << currentCount << "\n";
 		#endif
 		}
-*/
+
 		void traceDeadlock(const char* modifier = "");
 
 		inline void refreshTrace() {
@@ -270,18 +269,19 @@ namespace sys {
 
 	public:
 		inline bool isLockedByCurrentThread() const {
-			WMB();
+			COMPILER_BARRIER();
 
 			return threadLockHolder == Thread::getCurrentThread();
 		}
 
-                inline bool isReadLocked() const {
-                         return readLockCount > 0;
-                }
+		inline bool isReadLocked() const {
+			 return readLockCount > 0;
+		}
 
-		inline volatile Thread* getLockHolderThread() {
-			WMB();
-			return threadLockHolder;
+		inline Thread* getLockHolderThread() {
+			COMPILER_BARRIER();
+
+			return (Thread*) threadLockHolder;
 		}
 
 		// setters
@@ -306,5 +306,7 @@ namespace sys {
 } //namespace sys
 
 using namespace sys::thread;
+
+
 
 #endif /*LOCKABLE_H_*/
