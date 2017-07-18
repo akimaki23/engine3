@@ -187,6 +187,7 @@ void Logger::fatal(const StringBuffer& msg) const {
 	fatal(s);
 }
 
+#ifndef DISABLE_DEBUG_LOG
 void Logger::debug(const char* msg) const {
 	if (logLevel >= DEBUG) {
 		printTime(false);
@@ -206,6 +207,7 @@ void Logger::debug(const StringBuffer& msg) const {
 	String s = msg.toString();
 	debug(s);
 }
+#endif
 
 void Logger::warning(const char* msg) const {
 	printTime(false);
