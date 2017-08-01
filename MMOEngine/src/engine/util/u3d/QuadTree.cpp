@@ -122,7 +122,7 @@ bool QuadTreeNode::testInside(QuadTreeEntry* obj) const {
 	return x >= minX && x < maxX && y >= minY && y < maxY;
 }
 
-bool QuadTreeNode::testInRange(float x, float y, float range) {
+bool QuadTreeNode::testInRange(float x, float y, float range) const {
 	bool insideX = (minX <= x) && (x < maxX);
 	bool insideY = (minY <= y) && (y < maxY);
 
@@ -342,7 +342,7 @@ void QuadTree::inRange(QuadTreeEntry *obj, float range) {
 	}
 }
 
-int QuadTree::inRange(float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects) {
+int QuadTree::inRange(float x, float y, float range, SortedVector<ManagedReference<QuadTreeEntry*> >& objects) const {
 	ReadLocker locker(&mutex);
 
 	try {
@@ -356,7 +356,7 @@ int QuadTree::inRange(float x, float y, float range, SortedVector<ManagedReferen
 }
 
 int QuadTree::inRange(float x, float y, float range,
-		SortedVector<QuadTreeEntry*>& objects) {
+		SortedVector<QuadTreeEntry*>& objects) const {
 	ReadLocker locker(&mutex);
 
 	try {
@@ -839,7 +839,7 @@ void QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEnt
 	}
 }
 
-int QuadTree::inRange(float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects) {
+int QuadTree::inRange(float x, float y, SortedVector<ManagedReference<QuadTreeEntry*> >& objects) const {
 	ReadLocker locker(&mutex);
 
 	try {
@@ -852,7 +852,7 @@ int QuadTree::inRange(float x, float y, SortedVector<ManagedReference<QuadTreeEn
 	return 0;
 }
 
-int QuadTree::inRange(float x, float y, SortedVector<QuadTreeEntry*>& objects) {
+int QuadTree::inRange(float x, float y, SortedVector<QuadTreeEntry*>& objects) const {
 	ReadLocker locker(&mutex);
 
 	try {
@@ -865,8 +865,8 @@ int QuadTree::inRange(float x, float y, SortedVector<QuadTreeEntry*>& objects) {
 	return 0;
 }
 
-int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y,
-		SortedVector<ManagedReference<QuadTreeEntry*> >& objects) {
+int QuadTree::_inRange(const Reference<QuadTreeNode*>& node, float x, float y,
+		SortedVector<ManagedReference<QuadTreeEntry*> >& objects) const {
 	int count = 0;
 
 	for (int i = 0; i < node.get()->objects.size(); i++) {
@@ -892,8 +892,8 @@ int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, flo
 	return count;
 }
 
-int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y,
-		SortedVector<QuadTreeEntry* >& objects) {
+int QuadTree::_inRange(const Reference<QuadTreeNode*>& node, float x, float y,
+		SortedVector<QuadTreeEntry* >& objects) const {
 	int count = 0;
 
 	for (int i = 0; i < node.get()->objects.size(); i++) {
@@ -919,8 +919,8 @@ int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, flo
 	return count;
 }
 
-int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range,
-		SortedVector<ManagedReference<QuadTreeEntry*> >& objects) {
+int QuadTree::_inRange(const Reference<QuadTreeNode*>& node, float x, float y, float range,
+		SortedVector<ManagedReference<QuadTreeEntry*> >& objects) const {
 	int count = 0;
 
 	for (int i = 0; i < node.get()->objects.size(); i++) {
@@ -946,8 +946,8 @@ int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, flo
 	return count;
 }
 
-int QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, float x, float y, float range,
-		SortedVector<QuadTreeEntry* >& objects) {
+int QuadTree::_inRange(const Reference<QuadTreeNode*>& node, float x, float y, float range,
+		SortedVector<QuadTreeEntry* >& objects) const {
 	int count = 0;
 
 	for (int i = 0; i < node->objects.size(); i++) {
