@@ -10,9 +10,9 @@ void BerkeleyCheckpointTask::run() {
 
 
 //#ifdef VERSION_PUBLIC
-//uint64 DatabaseManager::MAX_CACHE_SIZE = 500000000; // 500MB
+uint64 DatabaseManager::MAX_CACHE_SIZE = 500000000; // 500MB
 //#else
-uint64 DatabaseManager::MAX_CACHE_SIZE = -1; // 500MB
+//uint64 DatabaseManager::MAX_CACHE_SIZE = -1; // 500MB
 //#endif
 
 bool DatabaseManager::CONVERT_DATABASES = true;

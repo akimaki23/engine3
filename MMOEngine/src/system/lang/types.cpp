@@ -466,6 +466,3 @@ template<> bool TypeInfoAtomicBase<bool>::nullValue() {
 	return false;
 }
 
-template<> const char* TypeInfoAtomicBase<const char*>::nullValue() {
-	return NULL;
-}

@@ -11,7 +11,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #include "StackTrace.h"
 
-String StackTrace::binaryName = "core3";
+String StackTrace::binaryName = "core3-basilisk";
 
 StackTrace::StackTrace() {
 	#ifdef PLATFORM_UNIX
@@ -46,7 +46,7 @@ void StackTrace::print() const {
 			#ifdef PLATFORM_MAC
 			command << "atos -p " << Thread::getProcessID();
 			#else
-			command << "/usr/bin/addr2line -e " << binaryName;
+			command << "/home/theanswer/gcc-4.7/output/bin/addr2line -e " << binaryName;
 			#endif
 		#else
 		char** tracedSymbols = backtrace_symbols(symbols, count);
