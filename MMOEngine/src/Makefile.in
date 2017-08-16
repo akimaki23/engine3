@@ -128,6 +128,13 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/orb/messages/RemoteObjectBroker.$(OBJEXT) \
 	engine/orb/messages/DOBServiceClient.$(OBJEXT) \
 	engine/orb/messages/DOBMessageFactory.$(OBJEXT) \
+	engine/orb/messages/DeployObjectMessage.$(OBJEXT) \
+	engine/orb/messages/DOBServiceHandler.$(OBJEXT) \
+	engine/orb/messages/DOBMessage.$(OBJEXT) \
+	engine/orb/messages/GetNextFreeObjectIDMessage.$(OBJEXT) \
+	engine/orb/messages/InvokeMethodMessage.$(OBJEXT) \
+	engine/orb/messages/RequestServantMessage.$(OBJEXT) \
+	engine/orb/messages/SendObjectDataMessage.$(OBJEXT) \
 	engine/orb/control/ObjectBrokerDirector.$(OBJEXT) \
 	engine/orb/control/ObjectBrokerAgent.$(OBJEXT) \
 	engine/stm/Transaction.$(OBJEXT) \
@@ -145,6 +152,7 @@ am_libengine3_a_OBJECTS = system/lang/System.$(OBJEXT) \
 	engine/util/ObserverEventMap.$(OBJEXT) \
 	engine/util/Observable.$(OBJEXT) engine/util/Facade.$(OBJEXT) \
 	engine/util/u3d/QuadTree.$(OBJEXT) \
+	engine/util/u3d/CloseObjectsVector.$(OBJEXT) \
 	engine/util/u3d/BasicQuadTree.$(OBJEXT) \
 	engine/util/u3d/Segment.$(OBJEXT) \
 	engine/util/u3d/QuadTreeEntry.$(OBJEXT) \
@@ -329,7 +337,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 @DEBUG_FALSE@AM_CXXFLAGS = -g0 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -DVERSION_PUBLIC
-@DEBUG_TRUE@AM_CXXFLAGS = -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -O2 -march=native -std=c++11 -flto=20 -B/home/theanswer/gcc-4.7/output/bin -fno-omit-frame-pointer
+@DEBUG_TRUE@AM_CXXFLAGS = -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -O2 -march=native -std=c++11  -B/home/theanswer/gcc-4.7/output/bin -fno-omit-frame-pointer
 
 #CC = /Users/victor/Documents/addresssanitizer/asan/asan_clang_Darwin/bin/clang
 #CXX = /Users/victor/Documents/addresssanitizer/asan/asan_clang_Darwin/bin/clang++
@@ -341,7 +349,8 @@ INCLUDES = $(SYSTEM_INCLUDES) \
 	    	-I/usr/local/BerkeleyDB.5.0/include -I$(USER_INCLUDES_PATH) \
 		-I../../../external \
 	    	-I../../../external/dlmalloc \
-	    	-I../../../external/multimmap
+	    	-I../../../external/multimmap \
+		-I/usr/local/boost/include
 
 noinst_LIBRARIES = libengine3.a
 libengine3_a_SOURCES = \
@@ -433,6 +442,13 @@ libengine3_a_SOURCES = \
 			engine/orb/messages/RemoteObjectBroker.cpp \
 			engine/orb/messages/DOBServiceClient.cpp \
 			engine/orb/messages/DOBMessageFactory.cpp \
+			engine/orb/messages/DeployObjectMessage.cpp \
+			engine/orb/messages/DOBServiceHandler.cpp \
+			engine/orb/messages/DOBMessage.cpp \
+			engine/orb/messages/GetNextFreeObjectIDMessage.cpp \
+			engine/orb/messages/InvokeMethodMessage.cpp \
+			engine/orb/messages/RequestServantMessage.cpp \
+			engine/orb/messages/SendObjectDataMessage.cpp \
 			engine/orb/control/ObjectBrokerDirector.cpp \
 			engine/orb/control/ObjectBrokerAgent.cpp \
 			engine/stm/Transaction.cpp \
@@ -449,8 +465,9 @@ libengine3_a_SOURCES = \
 			engine/util/ObserverImplementation.cpp \
 			engine/util/ObserverEventMap.cpp \
 			engine/util/Observable.cpp \
-.			engine/util/Facade.cpp \
+			engine/util/Facade.cpp \
 			engine/util/u3d/QuadTree.cpp \
+			engine/util/u3d/CloseObjectsVector.cpp \
 			engine/util/u3d/BasicQuadTree.cpp \
 			engine/util/u3d/Segment.cpp \
 			engine/util/u3d/QuadTreeEntry.cpp \
@@ -813,6 +830,27 @@ engine/orb/messages/DOBServiceClient.$(OBJEXT):  \
 engine/orb/messages/DOBMessageFactory.$(OBJEXT):  \
 	engine/orb/messages/$(am__dirstamp) \
 	engine/orb/messages/$(DEPDIR)/$(am__dirstamp)
+engine/orb/messages/DeployObjectMessage.$(OBJEXT):  \
+	engine/orb/messages/$(am__dirstamp) \
+	engine/orb/messages/$(DEPDIR)/$(am__dirstamp)
+engine/orb/messages/DOBServiceHandler.$(OBJEXT):  \
+	engine/orb/messages/$(am__dirstamp) \
+	engine/orb/messages/$(DEPDIR)/$(am__dirstamp)
+engine/orb/messages/DOBMessage.$(OBJEXT):  \
+	engine/orb/messages/$(am__dirstamp) \
+	engine/orb/messages/$(DEPDIR)/$(am__dirstamp)
+engine/orb/messages/GetNextFreeObjectIDMessage.$(OBJEXT):  \
+	engine/orb/messages/$(am__dirstamp) \
+	engine/orb/messages/$(DEPDIR)/$(am__dirstamp)
+engine/orb/messages/InvokeMethodMessage.$(OBJEXT):  \
+	engine/orb/messages/$(am__dirstamp) \
+	engine/orb/messages/$(DEPDIR)/$(am__dirstamp)
+engine/orb/messages/RequestServantMessage.$(OBJEXT):  \
+	engine/orb/messages/$(am__dirstamp) \
+	engine/orb/messages/$(DEPDIR)/$(am__dirstamp)
+engine/orb/messages/SendObjectDataMessage.$(OBJEXT):  \
+	engine/orb/messages/$(am__dirstamp) \
+	engine/orb/messages/$(DEPDIR)/$(am__dirstamp)
 engine/orb/control/$(am__dirstamp):
 	@$(MKDIR_P) engine/orb/control
 	@: > engine/orb/control/$(am__dirstamp)
@@ -913,6 +951,9 @@ engine/util/u3d/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) engine/util/u3d/$(DEPDIR)
 	@: > engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
 engine/util/u3d/QuadTree.$(OBJEXT): engine/util/u3d/$(am__dirstamp) \
+	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
+engine/util/u3d/CloseObjectsVector.$(OBJEXT):  \
+	engine/util/u3d/$(am__dirstamp) \
 	engine/util/u3d/$(DEPDIR)/$(am__dirstamp)
 engine/util/u3d/BasicQuadTree.$(OBJEXT):  \
 	engine/util/u3d/$(am__dirstamp) \
@@ -1076,9 +1117,16 @@ mostlyclean-compile:
 	-rm -f engine/orb/db/DOBObjectManager.$(OBJEXT)
 	-rm -f engine/orb/db/DistributedObjectDirectory.$(OBJEXT)
 	-rm -f engine/orb/db/UpdateModifiedObjectsThread.$(OBJEXT)
+	-rm -f engine/orb/messages/DOBMessage.$(OBJEXT)
 	-rm -f engine/orb/messages/DOBMessageFactory.$(OBJEXT)
 	-rm -f engine/orb/messages/DOBServiceClient.$(OBJEXT)
+	-rm -f engine/orb/messages/DOBServiceHandler.$(OBJEXT)
+	-rm -f engine/orb/messages/DeployObjectMessage.$(OBJEXT)
+	-rm -f engine/orb/messages/GetNextFreeObjectIDMessage.$(OBJEXT)
+	-rm -f engine/orb/messages/InvokeMethodMessage.$(OBJEXT)
 	-rm -f engine/orb/messages/RemoteObjectBroker.$(OBJEXT)
+	-rm -f engine/orb/messages/RequestServantMessage.$(OBJEXT)
+	-rm -f engine/orb/messages/SendObjectDataMessage.$(OBJEXT)
 	-rm -f engine/orb/object/DistributedMethod.$(OBJEXT)
 	-rm -f engine/orb/object/DistributedObject.$(OBJEXT)
 	-rm -f engine/orb/object/DistributedObjectServant.$(OBJEXT)
@@ -1120,6 +1168,7 @@ mostlyclean-compile:
 	-rm -f engine/util/iffstream/chunks/form/Form.$(OBJEXT)
 	-rm -f engine/util/u3d/AABBTree.$(OBJEXT)
 	-rm -f engine/util/u3d/BasicQuadTree.$(OBJEXT)
+	-rm -f engine/util/u3d/CloseObjectsVector.$(OBJEXT)
 	-rm -f engine/util/u3d/Funnel.$(OBJEXT)
 	-rm -f engine/util/u3d/Matrix4.$(OBJEXT)
 	-rm -f engine/util/u3d/QuadTree.$(OBJEXT)
@@ -1213,9 +1262,16 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/DOBObjectManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/DistributedObjectDirectory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/db/$(DEPDIR)/UpdateModifiedObjectsThread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/DOBMessage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/DOBMessageFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/DOBServiceClient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/DOBServiceHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/DeployObjectMessage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/GetNextFreeObjectIDMessage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/InvokeMethodMessage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/RemoteObjectBroker.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/RequestServantMessage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/orb/messages/$(DEPDIR)/SendObjectDataMessage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/object/$(DEPDIR)/DistributedMethod.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/object/$(DEPDIR)/DistributedObject.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/orb/object/$(DEPDIR)/DistributedObjectServant.Po@am__quote@
@@ -1257,6 +1313,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/iffstream/chunks/form/$(DEPDIR)/Form.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/AABBTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/BasicQuadTree.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/CloseObjectsVector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Funnel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/Matrix4.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@engine/util/u3d/$(DEPDIR)/QuadTree.Po@am__quote@

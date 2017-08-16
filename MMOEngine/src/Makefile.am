@@ -2,7 +2,7 @@
 # Distribution of this file for usage outside of Core3 is prohibited.
 
 if DEBUG
-AM_CXXFLAGS =-Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -O2 -march=native -std=c++11 -flto=20 -B/home/theanswer/gcc-4.7/output/bin -fno-omit-frame-pointer
+AM_CXXFLAGS =-Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -O2 -march=native -std=c++11  -B/home/theanswer/gcc-4.7/output/bin -fno-omit-frame-pointer
 else
 AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -DVERSION_PUBLIC
 endif
@@ -18,7 +18,8 @@ INCLUDES =  $(SYSTEM_INCLUDES) \
 	    	-I/usr/local/BerkeleyDB.5.0/include -I$(USER_INCLUDES_PATH) \
 		-I../../../external \
 	    	-I../../../external/dlmalloc \
-	    	-I../../../external/multimmap
+	    	-I../../../external/multimmap \
+		-I/usr/local/boost/include
 
 LIBS =  $(SYSTEM_LIBS) \
 		-L/usr/local/BerkeleyDB.5.0/lib \
@@ -116,6 +117,13 @@ libengine3_a_SOURCES = \
 			engine/orb/messages/RemoteObjectBroker.cpp \
 			engine/orb/messages/DOBServiceClient.cpp \
 			engine/orb/messages/DOBMessageFactory.cpp \
+			engine/orb/messages/DeployObjectMessage.cpp \
+			engine/orb/messages/DOBServiceHandler.cpp \
+			engine/orb/messages/DOBMessage.cpp \
+			engine/orb/messages/GetNextFreeObjectIDMessage.cpp \
+			engine/orb/messages/InvokeMethodMessage.cpp \
+			engine/orb/messages/RequestServantMessage.cpp \
+			engine/orb/messages/SendObjectDataMessage.cpp \
 			engine/orb/control/ObjectBrokerDirector.cpp \
 			engine/orb/control/ObjectBrokerAgent.cpp \
 			engine/stm/Transaction.cpp \
@@ -132,8 +140,9 @@ libengine3_a_SOURCES = \
 			engine/util/ObserverImplementation.cpp \
 			engine/util/ObserverEventMap.cpp \
 			engine/util/Observable.cpp \
-.			engine/util/Facade.cpp \
+			engine/util/Facade.cpp \
 			engine/util/u3d/QuadTree.cpp \
+			engine/util/u3d/CloseObjectsVector.cpp \
 			engine/util/u3d/BasicQuadTree.cpp \
 			engine/util/u3d/Segment.cpp \
 			engine/util/u3d/QuadTreeEntry.cpp \

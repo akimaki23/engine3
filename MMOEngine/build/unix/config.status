@@ -448,7 +448,7 @@ Copyright (C) 2010 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/mnt/ssd/workspaceGit/Core3/MMOEngine/build/unix'
+ac_pwd='/disk1/ssd/engine3/MMOEngine/build/unix'
 srcdir='../..'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/bin/mkdir -p'
@@ -919,7 +919,7 @@ S["CXXFLAGS"]="  "
 S["CXX"]="/home/theanswer/gcc-4.7/output/bin/g++"
 S["am__untar"]="${AMTAR} xf -"
 S["am__tar"]="${AMTAR} chof - \"$$tardir\""
-S["AMTAR"]="${SHELL} /mnt/ssd/workspaceGit/Core3/MMOEngine/build/unix/config/missing --run tar"
+S["AMTAR"]="${SHELL} /disk1/ssd/engine3/MMOEngine/build/unix/config/missing --run tar"
 S["am__leading_dot"]="."
 S["SET_MAKE"]=""
 S["AWK"]="mawk"
@@ -927,12 +927,12 @@ S["mkdir_p"]="/bin/mkdir -p"
 S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]="strip"
-S["install_sh"]="${SHELL} /mnt/ssd/workspaceGit/Core3/MMOEngine/build/unix/config/install-sh"
-S["MAKEINFO"]="${SHELL} /mnt/ssd/workspaceGit/Core3/MMOEngine/build/unix/config/missing --run makeinfo"
-S["AUTOHEADER"]="${SHELL} /mnt/ssd/workspaceGit/Core3/MMOEngine/build/unix/config/missing --run autoheader"
-S["AUTOMAKE"]="${SHELL} /mnt/ssd/workspaceGit/Core3/MMOEngine/build/unix/config/missing --run automake-1.11"
-S["AUTOCONF"]="${SHELL} /mnt/ssd/workspaceGit/Core3/MMOEngine/build/unix/config/missing --run autoconf"
-S["ACLOCAL"]="${SHELL} /mnt/ssd/workspaceGit/Core3/MMOEngine/build/unix/config/missing --run aclocal-1.11"
+S["install_sh"]="${SHELL} /disk1/ssd/engine3/MMOEngine/build/unix/config/install-sh"
+S["MAKEINFO"]="${SHELL} /disk1/ssd/engine3/MMOEngine/build/unix/config/missing --run makeinfo"
+S["AUTOHEADER"]="${SHELL} /disk1/ssd/engine3/MMOEngine/build/unix/config/missing --run autoheader"
+S["AUTOMAKE"]="${SHELL} /disk1/ssd/engine3/MMOEngine/build/unix/config/missing --run automake-1.11"
+S["AUTOCONF"]="${SHELL} /disk1/ssd/engine3/MMOEngine/build/unix/config/missing --run autoconf"
+S["ACLOCAL"]="${SHELL} /disk1/ssd/engine3/MMOEngine/build/unix/config/missing --run aclocal-1.11"
 S["VERSION"]="1.0"
 S["PACKAGE"]="engine3"
 S["CYGPATH_W"]="echo"

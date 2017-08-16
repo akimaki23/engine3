@@ -537,16 +537,6 @@ int BaseClient::sendReliablePackets(int count) {
 				}
 
 
-			pack->setTimestamp();
-
-			//prepareSend(pack);
-			prepareSequence(pack);
-			if (pack->getSequence() != (uint32) realServerSequence++) {
-				StringBuffer msg;
-				msg << "invalid server Packet " << pack->getSequence() << " sent (" << realServerSequence - 1 << ")";
-				error(msg);
-			}
-			
 			unlock();
 			
 			try {
