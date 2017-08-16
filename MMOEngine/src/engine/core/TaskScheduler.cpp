@@ -7,6 +7,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #ifndef VERSION_PUBLIC
 #define COUNT_SCHEDULER_TASKS
+#endif
 
 static Time startTime;
 

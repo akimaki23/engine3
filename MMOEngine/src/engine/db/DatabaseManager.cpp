@@ -70,7 +70,7 @@ void DatabaseManager::openEnvironment() {
 	config.setAllowCreate(true);
 	config.setInitializeLocking(true);
 	config.setInitializeLogging(true);
-	config.setLogAutoRemove(true);
+	config.setLogAutoRemove(false);
 	config.setThreaded(true);
 	config.setThreadCount(512);
 	config.setTransactional(true);

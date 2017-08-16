@@ -10,6 +10,7 @@
 #include "Environment.h"
 #include "BTransaction.h"
 #include "BerkeleyDatabase.h"
+#include <sys/ipc.h>
 
 using namespace engine::db::berkley;
 

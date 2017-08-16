@@ -415,7 +415,7 @@ void QuadTree::removeAll() {
  * Every Node can have data and children. Every data must be completely
  * contained inside the Node, so boundary sphere is checked.
  */
-void QuadTree::_insert(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj) {
+void QuadTree::_insert(Reference<QuadTreeNode*>& node, QuadTreeEntry *obj) {
 	/*
 	 * Logic:
 	 *
@@ -549,7 +549,7 @@ void QuadTree::_insert(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntr
 /* The difference to the Insert is that it starts at the current node
  * and tries to find the right place to be now that the position changed.
  */
-bool QuadTree::_update(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj) {
+bool QuadTree::_update(Reference<QuadTreeNode*>& node, QuadTreeEntry *obj) {
 	// Whew, still in the same square. Lucky bastards we are.
 	//System::out << "(" << obj->positionX << "," << obj->positionY << ")\n";
 
@@ -769,7 +769,7 @@ void QuadTree::copyObjects(const Reference<QuadTreeNode*>& node, float x, float 
 	}
 }
 
-void QuadTree::_inRange(TransactionalReference<QuadTreeNode*>& node, QuadTreeEntry *obj, float range) {
+void QuadTree::_inRange(Reference<QuadTreeNode*>& node, QuadTreeEntry *obj, float range) {
 	Reference<QuadTreeNode*> refNode = node.get();
 
 	float rangesq = range * range;
