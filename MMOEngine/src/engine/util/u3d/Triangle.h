@@ -8,7 +8,7 @@
 #ifndef TRIANGLE_H_
 #define TRIANGLE_H_
 
-#define TRIANGLE_INHERITS_VARIABLE
+//#define TRIANGLE_INHERITS_VARIABLE
 
 #include "Vector3.h"
 #include "Matrix4.h"

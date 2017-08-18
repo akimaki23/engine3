@@ -549,6 +549,13 @@ int BaseClient::sendReliablePackets(int count) {
 			
 			lock();
 
+				if (!DatagramServiceClient::send(pack)) {
+                        	        StringBuffer msg;
+                	                msg << "LOSING (" << pack->getSequence() << ") " /*<< pack->toString()*/;
+        	                        debug(msg);
+	                        }
+
+
 				++sentPackets;
 
 				sequenceBuffer.add(pack);
@@ -712,7 +719,7 @@ void BaseClient::run() {
 	}
 
 	if (i >= MAX_BUFFER_PACKETS_TICK_COUNT) {
-		warning("more than " + String::valueOf(MAX_BUFFER_PACKETS_TICK_COUNT) + " packets in sendLockFreeBuffer on BaseClient tick");
+		//warning("more than " + String::valueOf(MAX_BUFFER_PACKETS_TICK_COUNT) + " packets in sendLockFreeBuffer on BaseClient tick");
 	}
 
 	sendReliablePackets();
