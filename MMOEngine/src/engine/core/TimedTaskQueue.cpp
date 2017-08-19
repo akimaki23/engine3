@@ -225,6 +225,8 @@ Task* TimedTaskQueue::get() {
 				int64 difference = -task->getNextExecutionTime().miliDifference();
 
 				if (difference > 10) {
+					condMutex->unlock();
+
 					return NULL;
 				}
 			}
