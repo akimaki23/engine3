@@ -20,7 +20,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 #include "events/OutOfOrderTask.h"
 #include "events/AcknowledgeTask.h"
 
-#define BASE_PACKET_HANDLER_TASK_QUEUE 9
+#define BASE_PACKET_HANDLER_TASK_QUEUE "_baseclient"
 
 #define MULTI_THREADED_BASE_PACKET_HANDLER
 
@@ -150,14 +150,16 @@ void BasePacketHandler::handlePacket(BaseClient* client, Packet* pack) {
 void BasePacketHandler::doSessionStart(BaseClient* client, Packet* pack) {
 	//client->info("session request recieved");
 
-#ifdef MULTI_THREADED_BASE_PACKET_HANDLER
+#if defined(MULTI_THREADED_BASE_PACKET_HANDLER) && defined(LOCKFREE_BCLIENT_BUFFERS)
 	uint32 cid = SessionIDRequestMessage::parse(pack);
 
 	Reference<Task*> task = new SessionStartTask(client, cid);
+	task->setCustomTaskQueue(BASE_PACKET_HANDLER_TASK_QUEUE);
+
 	auto manager = Core::getTaskManager();
 
 	if (manager != nullptr)
-		manager->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+		manager->executeTask(task);
 #else
 
     SessionIDRequestMessage::parse(pack, client);
@@ -179,12 +181,13 @@ void BasePacketHandler::doSessionResponse(BaseClient* client, Packet* pack) {
 
     uint32 seed = SessionIDResponseMessage::parse(pack);
 
-#ifdef MULTI_THREADED_BASE_PACKET_HANDLER
+#if defined(MULTI_THREADED_BASE_PACKET_HANDLER) && defined(LOCKFREE_BCLIENT_BUFFERS)
     Reference<Task*> task = new SessionResponseTask(client, seed);
+	task->setCustomTaskQueue(BASE_PACKET_HANDLER_TASK_QUEUE);
 	auto manager = Core::getTaskManager();
 
 	if (manager != nullptr)
-		manager->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+		manager->executeTask(task);
 #else
     client->notifyReceivedSeed(seed);
 #endif
@@ -193,12 +196,13 @@ void BasePacketHandler::doSessionResponse(BaseClient* client, Packet* pack) {
 void BasePacketHandler::doDisconnect(BaseClient* client, Packet* pack) {
 	client->info("SELF DISCONNECTING CLIENT");
 
-#ifdef MULTI_THREADED_BASE_PACKET_HANDLER
+#if defined(MULTI_THREADED_BASE_PACKET_HANDLER) && defined(LOCKFREE_BCLIENT_BUFFERS)
 	Reference<Task*> task = new DisconnectTask(client);
+	task->setCustomTaskQueue(BASE_PACKET_HANDLER_TASK_QUEUE);
 	auto manager = Core::getTaskManager();
 
 	if (manager != nullptr)
-		manager->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+		manager->executeTask(task);
 #else
 	client->setClientDisconnected();
 	client->disconnect();
@@ -208,12 +212,13 @@ void BasePacketHandler::doDisconnect(BaseClient* client, Packet* pack) {
 void BasePacketHandler::doNetStatusResponse(BaseClient* client, Packet* pack) {
 	uint16 tick = NetStatusRequestMessage::parseTick(pack);
 
-#ifdef MULTI_THREADED_BASE_PACKET_HANDLER
+#if defined(MULTI_THREADED_BASE_PACKET_HANDLER) && defined(LOCKFREE_BCLIENT_BUFFERS)
 	Reference<Task*> task = new NetStatusResponseTask(client, tick);
+	task->setCustomTaskQueue(BASE_PACKET_HANDLER_TASK_QUEUE);
 	auto manager = Core::getTaskManager();
 
 	if (manager != nullptr)
-		manager->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+		manager->executeTask(task);
 #else
 	if (client->updateNetStatus(tick)) {
 
@@ -226,12 +231,13 @@ void BasePacketHandler::doNetStatusResponse(BaseClient* client, Packet* pack) {
 void BasePacketHandler::doOutOfOrder(BaseClient* client, Packet* pack) {
 	uint16 seq = OutOfOrderMessage::parse(pack);
 
-#ifdef MULTI_THREADED_BASE_PACKET_HANDLER
+#if defined(MULTI_THREADED_BASE_PACKET_HANDLER) && defined(LOCKFREE_BCLIENT_BUFFERS)
 	Reference<Task*> task = new OutOfOrderTask(client, seq);
+	task->setCustomTaskQueue(BASE_PACKET_HANDLER_TASK_QUEUE);
 	auto manager = Core::getTaskManager();
 
 	if (manager != nullptr)
-		manager->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+		manager->executeTask(task);
 #else
 	client->resendPackets(seq);
 #endif
@@ -244,12 +250,13 @@ void BasePacketHandler::doOutOfOrder(BaseClient* client, Packet* pack) {
 void BasePacketHandler::doAcknowledge(BaseClient* client, Packet* pack) {
 	uint16 seq = AcknowledgeMessage::parse(pack);
 
-#ifdef MULTI_THREADED_BASE_PACKET_HANDLER
+#if defined(MULTI_THREADED_BASE_PACKET_HANDLER) && defined(LOCKFREE_BCLIENT_BUFFERS)
 	Reference<Task*> task = new AcknowledgeTask(client, seq);
+	task->setCustomTaskQueue(BASE_PACKET_HANDLER_TASK_QUEUE);
 	auto manager = Core::getTaskManager();
 
 	if (manager != nullptr)
-		manager->executeTask(task, BASE_PACKET_HANDLER_TASK_QUEUE);
+		manager->executeTask(task);
 #else
 	client->acknowledgeServerPackets(seq);
 #endif
