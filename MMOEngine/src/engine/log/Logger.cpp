@@ -12,11 +12,14 @@ Time Logger::starttime;
 Logger Logger::console("Console");
 
 Mutex Logger::writeLock;
+volatile int Logger::globalLogLevel = LogLevel::DEBUG;
+bool Logger::syncGlobalLog = false;
 
 Logger::Logger() {
 	logFile = NULL;
 
 	logLevel = LOG;
+	doSyncLog = true;
 	doGlobalLog = true;
 }
 
@@ -26,6 +29,7 @@ Logger::Logger(const char *s) {
 	name = s;
 
 	logLevel = LOG;
+	doSyncLog = true;
 	doGlobalLog = true;
 }
 
@@ -35,6 +39,7 @@ Logger::Logger(const String& s) {
 	name = s;
 
 	logLevel = LOG;
+	doSyncLog = true;
 	doGlobalLog = true;
 }
 
@@ -46,16 +51,27 @@ Logger::~Logger() {
 }
 
 void Logger::setGlobalFileLogger(const char* file) {
-	globalLogFile = new FileWriter(new File(file));
+	if (globalLogFile != NULL)
+		closeGlobalFileLogger();
+
+	globalLogFile = new FileWriter(new File(file), true);
 
 	starttime.updateToCurrentTime();
 }
+
+void Logger::setGlobalFileLogLevel(LogLevel level) {
+	globalLogLevel = level;
+}
+
+void Logger::setGlobalFileLoggerSync(bool val) {
+	syncGlobalLog = val;
+};
 
 void Logger::setGlobalFileLogger(const String& file) {
 	if (globalLogFile != NULL)
 		closeGlobalFileLogger();
 
-	globalLogFile = new FileWriter(new File(file));
+	globalLogFile = new FileWriter(new File(file), true);
 
 	starttime.updateToCurrentTime();
 }
@@ -92,14 +108,13 @@ void Logger::closeFileLogger() {
 }
 
 void Logger::info(const char *msg, bool forcedLog) const {
-	if (logLevel >=  INFO || forcedLog) {
+	if (logLevel >= INFO || forcedLog) {
 		printTime(false);
 
 		System::out << " [" << name << "] " << msg << "\n";
 	}
 
-	if (logLevel + 1 >= INFO || forcedLog)
-		log(msg);
+	log(msg, LogLevel::INFO);
 }
 
 void Logger::info(const String& msg, bool forcedLog) const {
@@ -111,7 +126,7 @@ void Logger::info(const StringBuffer& msg, bool forcedLog) const {
 	info(s, forcedLog);
 }
 
-void Logger::log(const char *msg) const {
+void Logger::log(const char *msg, LogLevel type) const {
 	if (logFile == NULL && globalLogFile == NULL)
 		return;
 
@@ -119,27 +134,36 @@ void Logger::log(const char *msg) const {
 	
 //	return;
 
-	if (logLevel > LOG && logFile != NULL) {
+	if (logLevel >= type && logFile != NULL) {
 		FileWriter* logFile = const_cast<FileWriter*>(this->logFile);
 
-		//Locker locker(&writeLock);
-		
-		String time;
-		getTime(time);
+		StringBuffer fullMessage;
 
-		(*logFile) << time << " [" << name << "] " << msg << "\n";
+		getTime(fullMessage);
+		getLogType(fullMessage, type);
 
-		logFile->flush();
-	} else if (doGlobalLog && globalLogFile != NULL) {
+		fullMessage << msg << "\n";
+
+		(*logFile) << fullMessage;
+
+		if (doSyncLog) {
+			logFile->flush();
+		}
+	} else if (doGlobalLog && globalLogFile != NULL && globalLogLevel >= type) {
 		FileWriter* globalLogFile = const_cast<FileWriter*>(this->globalLogFile.get());
 
-/*		String time;
-		getTime(time);
+		StringBuffer fullMessage;
 
-		(*globalLogFile) << time << " [" << name << "] " << msg << "\n";
+		getTime(fullMessage);
+		getLogType(fullMessage, type);
 
-		globalLogFile->flush();
-*/		
+		fullMessage << msg << "\n";
+
+		(*globalLogFile) << fullMessage;
+
+		if (syncGlobalLog) {
+			globalLogFile->flush();
+		}
 	}
 }
 
@@ -154,9 +178,12 @@ void Logger::log(const StringBuffer& msg) const {
 void Logger::error(const char* msg) const {
 	printTime(false);
 
-	System::out << " [" << name << "] ERROR - " << msg << "\n";
+	StringBuffer fullMessage;
+	fullMessage << " [" << name << "] ERROR - " << msg << "\n";
 
-	log(msg);
+	System::out << fullMessage;
+
+	log(msg, LogLevel::ERROR);
 }
 
 void Logger::error(const String& msg) const {
@@ -171,9 +198,12 @@ void Logger::error(const StringBuffer& msg) const {
 void Logger::fatal(const char* msg) const {
 	printTime(false);
 
-	System::out << " [" << name << "] FATAL - " << msg << "\n";
+	StringBuffer fullMessage;
+	fullMessage << " [" << name << "] FATAL - " << msg << "\n";
 
-	log(msg);
+	System::out << fullMessage;
+
+	log(msg, LogLevel::FATAL);
 
 	abort();
 }
@@ -192,11 +222,14 @@ void Logger::debug(const char* msg) const {
 	if (logLevel >= DEBUG) {
 		printTime(false);
 
-		System::out << " [" << name << "] DEBUG - " << msg << "\n";
+		StringBuffer fullMessage;
+		fullMessage << " [" << name << "] DEBUG - " << msg << "\n";
+
+		System::out << fullMessage;
 	}
 
-	if (logLevel + 1 >= DEBUG)
-		log(msg);
+	//if (logLevel + 1 >= DEBUG)
+	log(msg, LogLevel::DEBUG);
 }
 
 void Logger::debug(const String& msg) const {
@@ -212,9 +245,12 @@ void Logger::debug(const StringBuffer& msg) const {
 void Logger::warning(const char* msg) const {
 	printTime(false);
 
-	System::out << " [" << name << "] WARNING - " << msg << "\n";
+	StringBuffer fullMessage;
+	fullMessage << " [" << name << "] WARNING - " << msg << "\n";
 
-	log(msg);
+	System::out << fullMessage;
+
+	log(msg, LogLevel::WARNING);
 }
 
 void Logger::warning(const String& msg) const {
@@ -226,9 +262,31 @@ void Logger::warning(const StringBuffer& msg) const {
 	warning(s);
 }
 
-void Logger::getTime(String& times, bool getFull) {
+void Logger::getLogType(StringBuffer& buffer, LogLevel type) const {
+	switch (type) {
+		case LogLevel::INFO:
+			buffer << " [" << name << "] INFO - ";
+			return;
+		case LogLevel::DEBUG:
+			buffer << " [" << name << "] DEBUG - ";
+			return;
+		case LogLevel::WARNING:
+			buffer << " [" << name << "] WARNING - ";
+			return;
+		case LogLevel::ERROR:
+			buffer << " [" << name << "] ERROR - ";
+			return;
+		case LogLevel::FATAL:
+			buffer << " [" << name << "] FATAL - ";
+			return;
+		default:
+			buffer << " [" << name << "] - ";
+			return;
+	}
+}
+
+void Logger::getTime(StringBuffer& str, bool getFull) {
 	Time time;
-	StringBuffer str;
 
 	uint64 elapsed = Logger::starttime.miliDifference(time);
 
@@ -245,6 +303,12 @@ void Logger::getTime(String& times, bool getFull) {
 
 	if (currentThread != NULL && getFull)
 		str << " " << currentThread->getName() << " -";
+}
+
+void Logger::getTime(String& times, bool getFull) {
+	StringBuffer str;
+
+	getTime(str, getFull);
 
 	times = str.toString();
 }
@@ -259,15 +323,17 @@ void Logger::printTime(bool getFull) {
 		//System::out << time.getMiliTime() << " msec ";
 		String formattedTime = time.getFormattedTime();
 		formattedTime = formattedTime.replaceAll("\n", "");
-		System::out << formattedTime << " [" << time.getMiliTime() << " msec] ";
+		str << formattedTime << " [" << time.getMiliTime() << " msec] ";
 	}
 
-	System::out << "(" << (elapsed / 1000) << " s)";
+	str << "(" << (elapsed / 1000) << " s)";
 
 	Thread* currentThread = Thread::getCurrentThread();
 
 	if (currentThread != NULL && getFull)
 		str << " " << currentThread->getName() << " -";
+
+	System::out << str;
 }
 
 uint64 Logger::getElapsedTime() {
