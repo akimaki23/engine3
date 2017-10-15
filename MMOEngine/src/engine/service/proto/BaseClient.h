@@ -104,7 +104,7 @@ namespace engine {
 
 		Packet* getBufferedPacket();
 
-		BasePacket* recieveFragmentedPacket(Packet* pack);
+		BasePacket* receiveFragmentedPacket(Packet* pack);
 
 		void run();
 		int sendReliablePackets(int count = 8);
