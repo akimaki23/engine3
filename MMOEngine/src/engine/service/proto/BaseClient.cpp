@@ -1357,7 +1357,7 @@ bool BaseClient::checkNetStatus() {
 			return false;
 		}*/
 
-		error("netStatusTimeout on client");
+		info("netStatusTimeout on client");
 
 		setError();
 		disconnect(false);
