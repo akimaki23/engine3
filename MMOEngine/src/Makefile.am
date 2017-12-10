@@ -2,7 +2,8 @@
 # Distribution of this file for usage outside of Core3 is prohibited.
 
 if DEBUG
-AM_CXXFLAGS =-Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -O2 -march=native -std=c++11  -B/home/theanswer/gcc-4.7/output/bin -fno-omit-frame-pointer
+#AM_CXXFLAGS =-Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -O3 -march=native -std=c++11  -B/home/theanswer/gcc-4.7/output/bin -fno-omit-frame-pointer -ggdb
+AM_CXXFLAGS =-Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -O3 -march=native -std=c++11 -fno-omit-frame-pointer -ggdb -fstack-protector
 else
 AM_CXXFLAGS =-g0 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-overloaded-virtual -DVERSION_PUBLIC
 endif
@@ -14,7 +15,7 @@ endif
 #CXX = clang++
 
 INCLUDES =  $(SYSTEM_INCLUDES) \
-	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I$(USER_INCLUDES_PATH)/lua -I/usr/include/mysql \
+	    	-I$(USER_INCLUDES_PATH)/mysql5/mysql -I$(USER_INCLUDES_PATH)/mysql -I/usr/include/lua5.3 -I/usr/include/mysql \
 	    	-I/usr/local/BerkeleyDB.5.0/include -I$(USER_INCLUDES_PATH) \
 		-I../../../external \
 	    	-I../../../external/dlmalloc \
@@ -87,6 +88,7 @@ libengine3_a_SOURCES = \
 			engine/core/ManagedService.cpp \
 			engine/core/ManagedObjectImplementation.cpp \
 			engine/core/ManagedProcess.cpp \
+			engine/core/MetricsManager.cpp \
 			engine/service/ServiceClient.cpp \
 			engine/service/ServiceThread.cpp \
 			engine/service/ServiceMessageHandlerThread.cpp \

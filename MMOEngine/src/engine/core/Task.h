@@ -7,7 +7,7 @@
 
 #include "system/util/Timer.h"
 
-//#define COLLECT_TASKSTATISTICS
+#define COLLECT_TASKSTATISTICS
 
 namespace engine {
 

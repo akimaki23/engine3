@@ -30,7 +30,7 @@
 
 //#define PRINT_OBJECT_COUNT
 
-#define MAX_UPDATE_THREADS 20
+#define MAX_UPDATE_THREADS 48
 #define MIN_UPDATE_THREADS 4
 #define INITIAL_OBJECT_ID 0x1000000 // reserving first ids for snapshot objects
 

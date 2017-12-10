@@ -735,7 +735,7 @@ void BaseClient::run() {
 			auto ref = reentrantTask;
 
 			if (ref != NULL)
-				ref->scheduleInIoScheduler(10);
+				ref->scheduleInIoScheduler(15);
 		} catch (...) {
 
 		}

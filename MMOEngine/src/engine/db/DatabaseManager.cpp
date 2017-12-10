@@ -72,7 +72,7 @@ void DatabaseManager::openEnvironment() {
 	config.setInitializeLogging(true);
 	config.setLogAutoRemove(false);
 	config.setThreaded(true);
-	config.setThreadCount(512);
+	config.setThreadCount(512 + 128);
 	config.setTransactional(true);
 	config.setInitializeCache(true);
 	uint32 logFileSize = 4000;

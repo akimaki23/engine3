@@ -82,7 +82,7 @@ void TaskManagerImpl::initialize(int workerCount, int schedulerCount, int ioCoun
 	int maxCpus = Math::max(1, (int) sysconf(_SC_NPROCESSORS_ONLN));
 
 	if (workerCount == 0) {
-		workerCount = Math::max(8, maxCpus + 2);
+		workerCount = Math::max(8, (maxCpus) / 2);
 		DEFAULT_WORKER_QUEUES = workerCount;
 	}
 
@@ -638,7 +638,7 @@ String formatDots(uint64 n)  {
 
 template<class M>
 void printStatistics(StringBuffer& msg4, M& ordered, bool demangle) {
-	for (int i = 0, j = ordered.size() - 1; i < 5 && (j - i) >= 0; ++i) {
+	for (int i = 0, j = ordered.size() - 1; i < 15 && (j - i) >= 0; ++i) {
 		int index = j - i;
 		auto& entry = ordered.elementAt(index);
 		auto& stats = entry.getKey();
@@ -710,7 +710,7 @@ String TaskManagerImpl::getInfo(bool print) {
 		msg2 << " pushed: " << scheduler->getPushedTasks() << " popped: " << scheduler->getPoppedTasks() << " removed: " << scheduler->getRemovedTasks() << endl;
 
 		//lets print top 5
-		for (int i = 0, j = ordered.size() - 1; i < 5 && (j - i) >= 0; ++i) {
+		for (int i = 0, j = ordered.size() - 1; i < 15 && (j - i) >= 0; ++i) {
 			int index = j - i;
 			msg2 << "\t" << ordered.elementAt(index).getValue() << ":" << ordered.elementAt(index).getKey() << endl;
 		}
