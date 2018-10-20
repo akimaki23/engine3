@@ -51,7 +51,7 @@ configure-release64:
 	cd build/unix && ../../configure --with-cross-host amd64-linux
 
 configure-debug:
-	cd build/unix && ../../configure --enable-debug LD_LIBRARY_PATH=/home/theanswer/gcc-4.7/output/lib CC=/home/theanswer/gcc-4.7/output/bin/gcc CXX=/home/theanswer/gcc-4.7/output/bin/g++ AR=/home/theanswer/gcc-4.7/output/bin/gcc-ar RANLIB=/home/theanswer/gcc-4.7/output/bin/gcc-ranlib NM=/home/theanswer/gcc-4.7/output/bin/gcc-nm
+	cd build/unix && ../../configure --enable-debug #LD_LIBRARY_PATH=/home/theanswer/gcc-4.7/output/lib CC=/home/theanswer/gcc-4.7/output/bin/gcc CXX=/home/theanswer/gcc-4.7/output/bin/g++ AR=/home/theanswer/gcc-4.7/output/bin/gcc-ar RANLIB=/home/theanswer/gcc-4.7/output/bin/gcc-ranlib NM=/home/theanswer/gcc-4.7/output/bin/gcc-nm
 	#cd build/unix && ../../configure --enable-debug
 compile: compile-idlc compile-engine install-lib
 

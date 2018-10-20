@@ -22,7 +22,7 @@ Distribution of this file for usage outside of Core3 is prohibited.
 
 #define BASE_PACKET_HANDLER_TASK_QUEUE "_baseclient"
 
-#define MULTI_THREADED_BASE_PACKET_HANDLER
+//#define MULTI_THREADED_BASE_PACKET_HANDLER
 
 BasePacketHandler::BasePacketHandler() : Logger() {
 	serviceHandler = NULL;

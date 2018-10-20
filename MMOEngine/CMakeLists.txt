@@ -10,7 +10,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/build/cm
 MESSAGE(STATUS "CMAKE_MODULE_PATH:" ${CMAKE_MODULE_PATH})
 
 # Add lua includes
-include_directories(/usr/include/lua5.1)
 include_directories(/opt/local/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
@@ -18,6 +17,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
 # Find mysql includes
 find_package(MySql REQUIRED)
 include_directories(${MYSQL_INCLUDE_DIR})
+
+find_package(Lua "5.3" REQUIRED)
+include_directories(${LUA_INCLUDE_DIR})
 
 # Find berkeley includes
 find_package(Berkeley REQUIRED)
